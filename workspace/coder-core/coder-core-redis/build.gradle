@@ -1,0 +1,6 @@
+dependencies {
+    api project(':coder-core-common')
+    api 'org.springframework.boot:spring-boot-starter-data-redis'
+    api 'org.springframework.session:spring-session-data-redis'
+    api 'org.apache.commons:commons-pool2'
+}

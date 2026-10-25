@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : UserStatusApplyBatchMapper.xml
+    Description   : userStatusApplyJob 전용 Mapper (BHFL001 사용자상태변경 적용, TB_USR_M 갱신)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.batch.job.system.userstatusapply.mapper.UserStatusApplyBatchMapper">
+
+    <!--
+           퇴직 사용자의 사용여부를 N으로, 사용종료일자를 퇴사일자(없으면 기준일자)로 갱신한다.
+           퇴사일자가 없으면 기존 사용종료일자와 기준일자 중 이른 날짜를 쓴다.
+           이미 반영된 사용자(USE_YN = N 이고 사용종료일자가 맞는 경우)는 다시 갱신하지 않는다.
+           작성자 : ywkim
+      -->
+    <update id="updateRetiredUser">
+        /* UserStatusApplyBatchMapper.updateRetiredUser 퇴직 사용자의 사용여부를 N으로, 사용종료일자를 퇴사일자(없으면 기준일자)로 갱신한다. */
+        UPDATE TB_USR_M
+           SET USE_YN       = 'N',
+               USE_END_DT   = COALESCE(NULLIF(TRIM(RESI_DT), ''),
+                                       LEAST(COALESCE(NULLIF(TRIM(USE_END_DT), ''), #{baseDt}), #{baseDt})),
+               FINA_REGR_ID = #{finaRegrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE USR_STAT_CD = 'R'
+           AND (USE_YN &lt;&gt; 'N'
+                OR (NULLIF(TRIM(RESI_DT), '') IS NOT NULL
+                    AND NULLIF(TRIM(USE_END_DT), '') IS DISTINCT FROM TRIM(RESI_DT))
+                OR (NULLIF(TRIM(RESI_DT), '') IS NULL
+                    AND NULLIF(TRIM(USE_END_DT), '') IS NULL))
+    </update>
+
+    <!--
+           휴직 사용자의 사용여부를 N으로 갱신한다.
+           작성자 : ywkim
+      -->
+    <update id="updateLeaveUser">
+        /* UserStatusApplyBatchMapper.updateLeaveUser 휴직 사용자의 사용여부를 N으로 갱신한다. */
+        UPDATE TB_USR_M
+           SET USE_YN       = 'N',
+               FINA_REGR_ID = #{finaRegrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE USR_STAT_CD = 'L'
+           AND USE_YN &lt;&gt; 'N'
+    </update>
+
+</mapper>

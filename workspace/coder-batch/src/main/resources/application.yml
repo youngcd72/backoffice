@@ -1,0 +1,127 @@
+server:
+  port: 8081
+  shutdown: graceful
+
+spring:
+  application:
+    name: coder-batch
+
+  # 프로필 미지정 시 local (application-{local|dev|prod}.yml)
+  #   실행: SPRING_PROFILES_ACTIVE=dev  또는  --spring.profiles.active=prod
+  profiles:
+    default: local
+
+  lifecycle:
+    timeout-per-shutdown-phase: 60s
+
+  # -------------------------------------------------------------------
+  # Database Configuration (PostgreSQL) - coder-core-db DataSourceConfig
+  #   접속 정보(jdbc-url / username / password)는 프로필별 파일에 둔다.
+  # -------------------------------------------------------------------
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 20          # Quartz 스레드(10) + Cursor Reader 세션 + 관리 API 여유분
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 30000
+
+  # -------------------------------------------------------------------
+  # Spring Batch
+  # -------------------------------------------------------------------
+  batch:
+    job:
+      enabled: false                 # 기동 시 Job 자동 실행 금지 (Quartz가 실행)
+    jdbc:
+      initialize-schema: never       # DDL은 schema/batch/*.sql 로 관리
+
+  # -------------------------------------------------------------------
+  # Quartz (JDBC JobStore, Cluster)
+  # -------------------------------------------------------------------
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never       # DDL은 schema/batch/*.sql 로 관리
+    wait-for-jobs-to-complete-on-shutdown: true
+    overwrite-existing-jobs: true
+    properties:
+      org.quartz.scheduler.instanceName: coder-batch-scheduler
+      org.quartz.scheduler.instanceId: AUTO
+      org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+      org.quartz.jobStore.tablePrefix: QRTZ_
+      org.quartz.jobStore.isClustered: true
+      org.quartz.jobStore.clusterCheckinInterval: 15000
+      org.quartz.jobStore.misfireThreshold: 60000
+      org.quartz.threadPool.threadCount: 10
+
+  # -------------------------------------------------------------------
+  # Redis - 배치 실패 알람 실시간 전송 (채널 coder:sse 로 발행 → coder-backend 가 SSE 로 화면에 전달)
+  #   Redis 를 쓸 수 없어도 알람은 TB_ALRM_L 에 남아 다음 조회 때 표시된다.
+  # -------------------------------------------------------------------
+  data:
+    redis:
+      host: ${CODER_REDIS_HOST:localhost}
+      port: ${CODER_REDIS_PORT:6379}
+      timeout: 3000ms
+
+# -------------------------------------------------------------------
+# CODER Framework Configurations
+# -------------------------------------------------------------------
+coder:
+  mybatis:
+    mapper-locations: classpath*:mapper/**/*.xml
+    type-aliases-package: kr.or.coder.batch.frame.dto,kr.or.coder.batch.frame.entity,kr.or.coder.core.db.model
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    use-generated-keys: true
+    default-statement-timeout: 0     # 배치는 문장 타임아웃 미적용
+
+  # coder-backend에서 발급한 JWT를 그대로 검증하도록 secret/issuer를 동일하게 맞춘다.
+  security:
+    enabled: true
+    csrf-enabled: false
+    cors-enabled: true
+    jwt:
+      secret: ${CODER_JWT_SECRET:coder-enterprise-super-secure-jwt-signing-key-256bit-secret-value!}
+      issuer: "coder-auth"
+    permit-urls:
+      - "/swagger-ui.html"
+      - "/swagger-ui/**"
+      - "/v3/api-docs/**"
+      - "/actuator/health"
+      - "/error"
+
+  message:
+    basename: messages/messages
+    encoding: UTF-8
+    default-locale: ko
+    cache-seconds: 3600
+
+  swagger:
+    enabled: true
+    title: CODER Batch API
+    description: Spring Batch + Quartz batch job management API
+    version: v1.0.0
+    oauth2:
+      enabled: false
+
+  batch:
+    system-user-id: BATCH            # 스케줄 실행 시 FIRS_REGR_ID / FINA_REGR_ID
+    retention-days: 90               # 실행 이력 보관 기간 (execLogPurgeJob)
+    default-chunk-size: 1000
+    time-zone: Asia/Seoul
+
+# -------------------------------------------------------------------
+# Spring Boot Actuator Management
+# -------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  health:
+    redis:
+      enabled: false                 # Redis 는 알람 실시간 전송용(선택)이라 배치 상태(health)에 포함하지 않는다

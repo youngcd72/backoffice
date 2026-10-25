@@ -1,0 +1,104 @@
+# ===================================================================
+# CODER Framework Sample Application Configuration
+# ===================================================================
+# 본 파일은 CODER Core Framework 각 모듈(DB, Redis, Security 등)에
+# 필요한 설정값을 일괄 관리하기 위한 sample application.yml 입니다.
+# ===================================================================
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: coder-application
+
+  # -------------------------------------------------------------------
+  # Spring HikariCP DataSource Configuration
+  # coder-core-db 모듈 (DataSourceConfig)
+  # -------------------------------------------------------------------
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/coder_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+      username: root
+      password: password
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+
+# -------------------------------------------------------------------
+# CODER Core Framework Configurations
+# -------------------------------------------------------------------
+coder:
+  # -----------------------------------------------------------------
+  # Database Configuration
+  # coder-core-db 모듈 설정
+  # -----------------------------------------------------------------
+  database:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/coder_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: password
+    maximum-pool-size: 10
+    minimum-idle: 5
+
+  # MyBatis 상세 설정 (coder.mybatis)
+  mybatis:
+    mapper-locations: classpath*:mapper/**/*.xml
+    type-aliases-package: kr.or.coder
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    use-generated-keys: true
+    default-statement-timeout: 30
+
+  # -----------------------------------------------------------------
+  # Redis Configuration
+  # coder-core-redis 모듈 (RedisProperties)
+  # -----------------------------------------------------------------
+  redis:
+    host: localhost
+    port: 6379
+    password: ""
+    database: 0
+    timeout: 3000
+    session:
+      enabled: true
+      max-inactive-interval-in-seconds: 1800
+      namespace: "coder:session"
+
+  # -----------------------------------------------------------------
+  # Security Configuration (OAuth2)
+  # coder-core-security 모듈 (OAuth2SecurityProperties)
+  # -----------------------------------------------------------------
+  security:
+    enabled: true
+    permit-urls:
+      - /swagger-ui.html
+      - /swagger-ui/**
+      - /v3/api-docs/**
+      - /swagger-resources/**
+      - /actuator/health
+      - /error
+      - /oauth2/**
+      - /login/**
+    csrf-enabled: false
+    cors-enabled: true
+
+  # -----------------------------------------------------------------
+  # Swagger / OpenAPI Documentation Configuration
+  # coder-core-security 모듈 (SwaggerProperties)
+  # -----------------------------------------------------------------
+  swagger:
+    enabled: true
+    title: "CODER Framework API"
+    description: "CODER Core Framework Standard RESTful API Specification"
+    version: "v1.0.0"
+    oauth2:
+      enabled: true
+      authorization-url: "/oauth2/authorization"
+      token-url: "/oauth2/token"
+      client-id: "coder-client"
+      client-secret: "coder-secret"
+      scope: "read write"

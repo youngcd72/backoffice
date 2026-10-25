@@ -1,0 +1,38 @@
+# 로컬 설치 도구 (JDK, Node 설치 파일 - GitHub 100MB 제한 초과)
+/tools/
+
+# Gradle / Java 빌드 결과물
+.gradle/
+build/
+bin/
+out/
+*.class
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# 로그
+logs/
+*.log
+
+# IDE
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.factorypath
+.DS_Store
+Thumbs.db
+
+# Claude Code 개인 설정
+.claude/settings.local.json
+
+# 비밀값 파일
+*.pem
+*.key
+*.p12
+*.jks

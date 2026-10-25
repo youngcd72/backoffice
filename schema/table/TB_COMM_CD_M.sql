@@ -1,0 +1,53 @@
+-- PostgreSQL / CLAUDE.md 5.x 표준 적용 (COMP_CD 제외)
+-- ---------------------------------------------------------------------
+-- TB_COMM_CD_M : 공통코드기본
+-- ---------------------------------------------------------------------
+CREATE TABLE TB_COMM_CD_M (
+    WRK_MDUL_CD           VARCHAR(2)   NOT NULL,
+    COMM_CTG_CD           VARCHAR(30)  NOT NULL,
+    COMM_CTG_NM           VARCHAR(50),
+    COMM_PROP_NM_1        VARCHAR(40),
+    COMM_PROP_NM_2        VARCHAR(40),
+    COMM_PROP_NM_3        VARCHAR(40),
+    COMM_PROP_NM_4        VARCHAR(40),
+    COMM_PROP_NM_5        VARCHAR(40),
+    COMM_PROP_NM_6        VARCHAR(40),
+    COMM_PROP_NM_7        VARCHAR(40),
+    COMM_PROP_NM_8        VARCHAR(40),
+    COMM_PROP_NM_9        VARCHAR(40),
+    COMM_PROP_NM_10       VARCHAR(40),
+    USE_YN                CHAR(1)      NOT NULL DEFAULT 'N',
+    USR_MNGE_YN           CHAR(1)      NOT NULL,
+    ALIN_SEQ              INTEGER,
+    RMK                   VARCHAR(200),
+    REFL_PRGM_ID          VARCHAR(50),
+    FIRS_REGR_ID         VARCHAR(10)  NOT NULL,
+    FIRS_REG_DT           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FINA_REGR_ID          VARCHAR(10)  NOT NULL,
+    FINA_REG_DT           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT TB_COMM_CD_M_PK PRIMARY KEY (WRK_MDUL_CD, COMM_CTG_CD)
+);
+
+COMMENT ON TABLE  TB_COMM_CD_M IS '공통코드기본 (ERD: MS0150M)';
+COMMENT ON COLUMN TB_COMM_CD_M.WRK_MDUL_CD           IS '업무모듈코드';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_CTG_CD           IS '공통분류코드';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_CTG_NM           IS '공통분류명';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_1        IS '공통속성명1';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_2        IS '공통속성명2';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_3        IS '공통속성명3';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_4        IS '공통속성명4';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_5        IS '공통속성명5';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_6        IS '공통속성명6';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_7        IS '공통속성명7';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_8        IS '공통속성명8';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_9        IS '공통속성명9';
+COMMENT ON COLUMN TB_COMM_CD_M.COMM_PROP_NM_10       IS '공통속성명10';
+COMMENT ON COLUMN TB_COMM_CD_M.USE_YN                IS '사용여부';
+COMMENT ON COLUMN TB_COMM_CD_M.USR_MNGE_YN           IS '사용자관리여부';
+COMMENT ON COLUMN TB_COMM_CD_M.ALIN_SEQ              IS '정렬순번';
+COMMENT ON COLUMN TB_COMM_CD_M.RMK                   IS '비고';
+COMMENT ON COLUMN TB_COMM_CD_M.REFL_PRGM_ID          IS '반영프로그램ID';
+COMMENT ON COLUMN TB_COMM_CD_M.FIRS_REGR_ID          IS '최초등록자ID';
+COMMENT ON COLUMN TB_COMM_CD_M.FIRS_REG_DT           IS '최초등록일시';
+COMMENT ON COLUMN TB_COMM_CD_M.FINA_REGR_ID          IS '최종등록자ID';
+COMMENT ON COLUMN TB_COMM_CD_M.FINA_REG_DT           IS '최종등록일시';

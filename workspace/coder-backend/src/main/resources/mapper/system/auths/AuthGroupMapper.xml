@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : AuthGroupMapper.xml
+    Description   : SYAU020 그룹권한관리 MyBatis Mapper (TB_AUTH_GRP_M, TB_AUTH_GRP_MENU_R, TB_AUTH_GRP_CMPN_R)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.auths.mapper.AuthGroupMapper">
+
+    <!--
+           권한그룹 검색 조건 (그룹코드·그룹명 부분 일치, 사용여부, 별칭 G)
+           작성자 : ywkim
+      -->
+    <sql id="authGroupSearchCondition">
+        <where>
+            <if test="usrGrpCd != null and usrGrpCd.trim() != ''">
+                AND UPPER(G.USR_GRP_CD) LIKE '%' || UPPER(TRIM(#{usrGrpCd})) || '%'
+            </if>
+            <if test="usrGrpNm != null and usrGrpNm.trim() != ''">
+                AND G.USR_GRP_NM LIKE '%' || TRIM(#{usrGrpNm}) || '%'
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND G.USE_YN = #{useYn}
+            </if>
+        </where>
+    </sql>
+
+    <!--
+           조회 조건에 맞는 권한그룹 목록을 그룹코드 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectAuthGroupList" resultType="kr.or.coder.biz.system.auths.dto.AuthGroupResponse">
+        /* AuthGroupMapper.selectAuthGroupList 조회 조건에 맞는 권한그룹 목록을 그룹코드 순으로 조회 */
+        SELECT USR_GRP_CD,
+               COALESCE(USR_GRP_NM, '') AS USR_GRP_NM,
+               USE_YN,
+               COALESCE(ST_DT, '')      AS ST_DT,
+               COALESCE(END_DT, '')     AS END_DT,
+               COALESCE(RMK, '')        AS RMK
+        FROM TB_AUTH_GRP_M G
+        <include refid="authGroupSearchCondition"/>
+        ORDER BY USR_GRP_CD
+    </select>
+
+    <!--
+           권한그룹이 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsAuthGroup" resultType="boolean">
+        /* AuthGroupMapper.existsAuthGroup 권한그룹이 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_AUTH_GRP_M WHERE USR_GRP_CD = #{usrGrpCd})
+    </select>
+
+    <!--
+           권한그룹을 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertAuthGroup">
+        /* AuthGroupMapper.insertAuthGroup 권한그룹을 등록 */
+        INSERT INTO TB_AUTH_GRP_M (
+            USR_GRP_CD, USR_GRP_NM, USE_YN, ST_DT, END_DT, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrGrpCd}, #{item.usrGrpNm}, #{item.useYn},
+            NULLIF(#{item.stDt}, ''), NULLIF(#{item.endDt}, ''), NULLIF(#{item.rmk}, ''),
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           권한그룹을 수정
+           작성자 : ywkim
+      -->
+    <update id="updateAuthGroup">
+        /* AuthGroupMapper.updateAuthGroup 권한그룹을 수정 */
+        UPDATE TB_AUTH_GRP_M
+           SET USR_GRP_NM   = #{item.usrGrpNm},
+               USE_YN       = #{item.useYn},
+               ST_DT        = NULLIF(#{item.stDt}, ''),
+               END_DT       = NULLIF(#{item.endDt}, ''),
+               RMK          = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID = #{regrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE USR_GRP_CD = #{item.usrGrpCd}
+    </update>
+
+    <!--
+           권한그룹을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroup">
+        /* AuthGroupMapper.deleteAuthGroup 권한그룹을 삭제 */
+        DELETE FROM TB_AUTH_GRP_M
+         WHERE USR_GRP_CD = #{usrGrpCd}
+    </delete>
+
+    <!--
+           권한그룹의 사용자 매핑을 모두 삭제 (그룹 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupUserList">
+        /* AuthGroupMapper.deleteAuthGroupUserList 권한그룹의 사용자 매핑을 모두 삭제 (그룹 삭제 시) */
+        DELETE FROM TB_USR_AUTH_GRP_R
+         WHERE USR_GRP_CD = #{usrGrpCd}
+    </delete>
+
+    <!--
+           권한그룹의 화면 권한 목록을 메뉴ID 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectAuthGroupMenuList" resultType="kr.or.coder.biz.system.auths.dto.AuthGroupMenuResponse">
+        /* AuthGroupMapper.selectAuthGroupMenuList 권한그룹의 화면 권한 목록을 메뉴ID 순으로 조회 */
+        SELECT USR_GRP_CD, MENU_ID, PRGM_ID
+        FROM TB_AUTH_GRP_MENU_R
+        WHERE USR_GRP_CD = #{usrGrpCd}
+        ORDER BY MENU_ID, PRGM_ID
+    </select>
+
+
+    <!--
+           권한그룹 화면 권한을 등록 (이미 있으면 건너뜀)
+           작성자 : ywkim
+      -->
+    <insert id="insertAuthGroupMenu">
+        /* AuthGroupMapper.insertAuthGroupMenu 권한그룹 화면 권한을 등록 (이미 있으면 건너뜀) */
+        INSERT INTO TB_AUTH_GRP_MENU_R (
+            USR_GRP_CD, MENU_ID, PRGM_ID,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrGrpCd}, #{item.menuId}, #{item.prgmId},
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (USR_GRP_CD, MENU_ID, PRGM_ID) DO NOTHING
+    </insert>
+
+    <!--
+           권한그룹 화면 권한을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupMenu">
+        /* AuthGroupMapper.deleteAuthGroupMenu 권한그룹 화면 권한을 삭제 */
+        DELETE FROM TB_AUTH_GRP_MENU_R
+         WHERE USR_GRP_CD = #{usrGrpCd}
+           AND MENU_ID    = #{menuId}
+           AND PRGM_ID    = #{prgmId}
+    </delete>
+
+    <!--
+           권한그룹의 화면 권한을 모두 삭제 (그룹 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupMenuList">
+        /* AuthGroupMapper.deleteAuthGroupMenuList 권한그룹의 화면 권한을 모두 삭제 (그룹 삭제 시) */
+        DELETE FROM TB_AUTH_GRP_MENU_R
+         WHERE USR_GRP_CD = #{usrGrpCd}
+    </delete>
+
+    <!--
+           권한그룹의 컴포넌트 권한을 조회 (프로그램ID가 없으면 전체)
+           작성자 : ywkim
+      -->
+    <select id="selectAuthGroupComponentList" resultType="kr.or.coder.biz.system.auths.dto.AuthGroupComponentResponse">
+        /* AuthGroupMapper.selectAuthGroupComponentList 권한그룹의 컴포넌트 권한을 조회 (프로그램ID가 없으면 전체) */
+        SELECT USR_GRP_CD, PRGM_ID, CMPN_ID, AUTH_YN
+        FROM TB_AUTH_GRP_CMPN_R
+        WHERE USR_GRP_CD = #{usrGrpCd}
+        <if test="prgmId != null">
+          AND PRGM_ID = #{prgmId}
+        </if>
+        ORDER BY PRGM_ID, CMPN_ID
+    </select>
+
+
+    <!--
+           권한그룹 컴포넌트 권한을 등록 (이미 있으면 권한여부 수정)
+           작성자 : ywkim
+      -->
+    <insert id="insertAuthGroupComponent">
+        /* AuthGroupMapper.insertAuthGroupComponent 권한그룹 컴포넌트 권한을 등록 (이미 있으면 권한여부 수정) */
+        INSERT INTO TB_AUTH_GRP_CMPN_R (
+            USR_GRP_CD, PRGM_ID, CMPN_ID, AUTH_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrGrpCd}, #{item.prgmId}, #{item.cmpnId}, #{item.authYn},
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (USR_GRP_CD, PRGM_ID, CMPN_ID) DO UPDATE
+           SET AUTH_YN      = EXCLUDED.AUTH_YN,
+               FINA_REGR_ID = EXCLUDED.FINA_REGR_ID,
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+    </insert>
+
+
+    <!--
+           권한그룹의 컴포넌트 권한을 모두 삭제 (그룹 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupComponentList">
+        /* AuthGroupMapper.deleteAuthGroupComponentList 권한그룹의 컴포넌트 권한을 모두 삭제 (그룹 삭제 시) */
+        DELETE FROM TB_AUTH_GRP_CMPN_R
+         WHERE USR_GRP_CD = #{usrGrpCd}
+    </delete>
+
+    <!--
+           화면 권한이 남아 있지 않은 프로그램의 컴포넌트 권한을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupComponentWithoutMenu">
+        /* AuthGroupMapper.deleteAuthGroupComponentWithoutMenu 화면 권한이 남아 있지 않은 프로그램의 컴포넌트 권한을 삭제 */
+        DELETE FROM TB_AUTH_GRP_CMPN_R C
+         WHERE C.USR_GRP_CD = #{usrGrpCd}
+           AND NOT EXISTS (
+                SELECT 1 FROM TB_AUTH_GRP_MENU_R M
+                 WHERE M.USR_GRP_CD = C.USR_GRP_CD
+                   AND M.PRGM_ID    = C.PRGM_ID
+           )
+    </delete>
+
+    <!--
+           조회 조건에 맞는 권한그룹 목록을 그룹별 사용자수와 함께 그룹코드 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectAuthGroupUserCountList" resultType="kr.or.coder.biz.system.auths.dto.AuthGroupUserCountResponse">
+        /* AuthGroupMapper.selectAuthGroupUserCountList 조회 조건에 맞는 권한그룹 목록을 그룹별 사용자수와 함께 그룹코드 순으로 조회 */
+        SELECT G.USR_GRP_CD,
+               COALESCE(G.USR_GRP_NM, '') AS USR_GRP_NM,
+               G.USE_YN,
+               (SELECT COUNT(*) FROM TB_USR_AUTH_GRP_R R WHERE R.USR_GRP_CD = G.USR_GRP_CD) AS USR_CNT
+        FROM TB_AUTH_GRP_M G
+        <include refid="authGroupSearchCondition"/>
+        ORDER BY G.USR_GRP_CD
+    </select>
+
+    <!--
+           권한그룹에 속한 사용자 목록을 사용자ID 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectAuthGroupUserList" resultType="kr.or.coder.biz.system.auths.dto.AuthGroupUserResponse">
+        /* AuthGroupMapper.selectAuthGroupUserList 권한그룹에 속한 사용자 목록을 사용자ID 순으로 조회 */
+        SELECT R.USR_GRP_CD,
+               R.USR_ID,
+               COALESCE(U.USR_NM, '')     AS USR_NM,
+               COALESCE(U.USR_CLS_CD, '') AS USR_CLS_CD,
+               COALESCE(U.DEPT_CD, '')    AS DEPT_CD
+        FROM TB_USR_AUTH_GRP_R R
+        JOIN TB_USR_M U
+          ON U.USR_ID = R.USR_ID
+        WHERE R.USR_GRP_CD = #{usrGrpCd}
+        ORDER BY R.USR_ID
+    </select>
+
+    <!--
+           권한그룹에 사용자를 추가 (이미 있으면 무시, 사용기간 오늘~99991231)
+           작성자 : ywkim
+      -->
+    <insert id="insertAuthGroupUser">
+        /* AuthGroupMapper.insertAuthGroupUser 권한그룹에 사용자를 추가 (이미 있으면 무시, 사용기간 오늘~99991231) */
+        INSERT INTO TB_USR_AUTH_GRP_R (
+            USR_ID, USR_GRP_CD, ST_DT, END_DT,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{usrId}, #{usrGrpCd}, TO_CHAR(CURRENT_DATE, 'YYYYMMDD'), '99991231',
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (USR_ID, USR_GRP_CD) DO NOTHING
+    </insert>
+
+    <!--
+           권한그룹에서 사용자를 제외
+           작성자 : ywkim
+      -->
+    <delete id="deleteAuthGroupUser">
+        /* AuthGroupMapper.deleteAuthGroupUser 권한그룹에서 사용자를 제외 */
+        DELETE FROM TB_USR_AUTH_GRP_R
+         WHERE USR_GRP_CD = #{usrGrpCd}
+           AND USR_ID     = #{usrId}
+    </delete>
+
+</mapper>

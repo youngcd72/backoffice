@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : ComponentAuthMapper.xml
+    Description   : 로그인 사용자의 컴포넌트 권한(TB_PRGM_CMPN_M, TB_AUTH_GRP_CMPN_R, TB_USR_CMPN_R) MyBatis Mapper
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.19  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.common.frame.mapper.ComponentAuthMapper">
+
+    <!--
+           프로그램의 사용 중인 컴포넌트별로 사용자의 권한여부를 조회 (적용기간 내 권한그룹 또는 사용자 권한 중 하나라도 Y 이면 Y)
+           작성자 : ywkim
+      -->
+    <select id="selectComponentAuthList" resultType="kr.or.coder.common.frame.dto.auth.ComponentAuthResponse">
+        /* ComponentAuthMapper.selectComponentAuthList 프로그램의 사용 중인 컴포넌트별로 사용자의 권한여부를 조회 (적용기간 내 권한그룹 또는 사용자 권한 중 하나라도 Y 이면 Y) */
+        SELECT C.CMPN_ID,
+               CASE WHEN EXISTS (SELECT 1
+                                   FROM TB_USR_CMPN_R U
+                                  WHERE U.USR_ID  = #{usrId}
+                                    AND U.PRGM_ID = C.PRGM_ID
+                                    AND U.CMPN_ID = C.CMPN_ID
+                                    AND U.AUTH_YN = 'Y')
+                      OR EXISTS (SELECT 1
+                                   FROM TB_USR_AUTH_GRP_R R
+                                   JOIN TB_AUTH_GRP_M G
+                                     ON G.USR_GRP_CD = R.USR_GRP_CD
+                                   JOIN TB_AUTH_GRP_CMPN_R A
+                                     ON A.USR_GRP_CD = R.USR_GRP_CD
+                                  WHERE R.USR_ID  = #{usrId}
+                                    AND A.PRGM_ID = C.PRGM_ID
+                                    AND A.CMPN_ID = C.CMPN_ID
+                                    AND A.AUTH_YN = 'Y'
+                                    <include refid="CommonSql.validAuthGroupCondition"/>)
+                    THEN 'Y' ELSE 'N' END AS AUTH_YN
+        FROM TB_PRGM_CMPN_M C
+        WHERE C.PRGM_ID = #{prgmId}
+          AND C.USE_YN  = 'Y'
+        ORDER BY C.ALIN_SEQ NULLS LAST, C.CMPN_ID
+    </select>
+
+</mapper>

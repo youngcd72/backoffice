@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : ExecLogPurgeBatchMapper.xml
+    Description   : execLogPurgeJob 전용 Mapper (BATCH_* 메타 테이블과 TB_DSPT_EXEC_L 삭제)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.09  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.batch.job.system.execlogpurge.mapper.ExecLogPurgeBatchMapper">
+
+    <!--
+           보관 기간이 지난 종료된 JobExecution (실행 중인 건은 END_TIME이 NULL이므로 제외)
+           작성자 : ywkim
+      -->
+    <sql id="purgeTargetJobExecutionIds">
+        SELECT JOB_EXECUTION_ID
+        FROM BATCH_JOB_EXECUTION
+        WHERE END_TIME IS NOT NULL
+          AND CREATE_TIME &lt; #{baseDttm}
+    </sql>
+
+    <!--
+           기준일시 이전 Step 실행 컨텍스트를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchStepExecutionContext">
+        /* ExecLogPurgeBatchMapper.deleteBatchStepExecutionContext 기준일시 이전 Step 실행 컨텍스트를 삭제한다. */
+        DELETE FROM BATCH_STEP_EXECUTION_CONTEXT
+         WHERE STEP_EXECUTION_ID IN (
+               SELECT STEP_EXECUTION_ID
+               FROM BATCH_STEP_EXECUTION
+               WHERE JOB_EXECUTION_ID IN (<include refid="purgeTargetJobExecutionIds"/>)
+         )
+    </delete>
+
+    <!--
+           기준일시 이전 Step 실행 정보를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchStepExecution">
+        /* ExecLogPurgeBatchMapper.deleteBatchStepExecution 기준일시 이전 Step 실행 정보를 삭제한다. */
+        DELETE FROM BATCH_STEP_EXECUTION
+         WHERE JOB_EXECUTION_ID IN (<include refid="purgeTargetJobExecutionIds"/>)
+    </delete>
+
+    <!--
+           기준일시 이전 Job 실행 컨텍스트를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchJobExecutionContext">
+        /* ExecLogPurgeBatchMapper.deleteBatchJobExecutionContext 기준일시 이전 Job 실행 컨텍스트를 삭제한다. */
+        DELETE FROM BATCH_JOB_EXECUTION_CONTEXT
+         WHERE JOB_EXECUTION_ID IN (<include refid="purgeTargetJobExecutionIds"/>)
+    </delete>
+
+    <!--
+           기준일시 이전 Job 실행 파라미터를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchJobExecutionParams">
+        /* ExecLogPurgeBatchMapper.deleteBatchJobExecutionParams 기준일시 이전 Job 실행 파라미터를 삭제한다. */
+        DELETE FROM BATCH_JOB_EXECUTION_PARAMS
+         WHERE JOB_EXECUTION_ID IN (<include refid="purgeTargetJobExecutionIds"/>)
+    </delete>
+
+    <!--
+           기준일시 이전 Job 실행 정보를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchJobExecution">
+        /* ExecLogPurgeBatchMapper.deleteBatchJobExecution 기준일시 이전 Job 실행 정보를 삭제한다. */
+        DELETE FROM BATCH_JOB_EXECUTION
+         WHERE JOB_EXECUTION_ID IN (<include refid="purgeTargetJobExecutionIds"/>)
+    </delete>
+
+    <!--
+           실행 건이 하나도 남지 않은 JobInstance를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchJobInstance">
+        /* ExecLogPurgeBatchMapper.deleteBatchJobInstance 실행 건이 하나도 남지 않은 JobInstance를 삭제한다. */
+        DELETE FROM BATCH_JOB_INSTANCE I
+         WHERE NOT EXISTS (
+               SELECT 1
+               FROM BATCH_JOB_EXECUTION E
+               WHERE E.JOB_INSTANCE_ID = I.JOB_INSTANCE_ID
+         )
+    </delete>
+
+    <!--
+           기준일시 이전 배치실행내역(TB_DSPT_EXEC_L)을 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteDsptExecLog">
+        /* ExecLogPurgeBatchMapper.deleteDsptExecLog 기준일시 이전 배치실행내역(TB_DSPT_EXEC_L)을 삭제한다. */
+        DELETE FROM TB_DSPT_EXEC_L
+         WHERE EXEC_ST_DTTM &lt; #{baseDttm}
+           AND EXEC_END_DTTM IS NOT NULL
+    </delete>
+
+</mapper>

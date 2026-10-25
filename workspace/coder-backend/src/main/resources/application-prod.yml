@@ -1,0 +1,39 @@
+# -------------------------------------------------------------------
+# prod - 운영 서버
+#   DB 비밀번호, JWT secret, 초기 비밀번호는 기본값 없이 환경변수로만 받는다 (누락 시 기동 실패).
+#   Swagger 는 끄고, actuator 는 health 만 상세 없이 공개한다.
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      password: ${CODER_DB_PASSWORD}
+
+coder:
+  database:
+    password: ${CODER_DB_PASSWORD}
+
+  security:
+    jwt:
+      secret: ${CODER_JWT_SECRET}
+    permit-urls:
+      - "/"
+      - "/api/ping"
+      - "/api/v1/auth/login"
+      - "/api/v1/messages"
+      - "/actuator/health"
+      - "/error"
+
+  auth:
+    init-password: ${CODER_INIT_PASSWORD}
+
+  swagger:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never

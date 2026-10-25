@@ -1,0 +1,19 @@
+# -------------------------------------------------------------------
+# local - 개발자 PC (프로필 미지정 시 기본값)
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      # BATCH 계정: BATCH 스키마(BATCH_*, QRTZ_*) 소유, CODER 스키마는 배치가 쓰는 테이블만 권한 부여
+      # (schema/batch/batch-account.sql). 검색 순서 batch → coder 로 스키마 접두사 없이 조회한다.
+      jdbc-url: jdbc:postgresql://localhost:5432/coder?currentSchema=batch,coder
+      username: batch
+      password: ${CODER_BATCH_DB_PASSWORD:batch1234!}
+
+coder:
+  swagger:
+    enabled: true
+
+logging:
+  level:
+    kr.or.coder: DEBUG

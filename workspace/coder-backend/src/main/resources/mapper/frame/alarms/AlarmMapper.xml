@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : AlarmMapper.xml
+    Description   : 알람내역(TB_ALRM_L) MyBatis Mapper
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.common.frame.mapper.AlarmMapper">
+
+    <!--
+           수신자의 알람 목록을 최근 발송 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectAlarmList" resultType="kr.or.coder.common.frame.dto.alarm.AlarmResponse">
+        /* AlarmMapper.selectAlarmList 수신자의 알람 목록을 최근 발송 순으로 조회 */
+        SELECT ALRM_SN,
+               ALRM_TYPE_CD,
+               ALRM_TITL_NM,
+               ALRM_CONT,
+               PRGM_ID,
+               CFM_YN,
+               FIRS_REGR_ID,
+               FIRS_REG_DT
+        FROM TB_ALRM_L
+        WHERE RCVR_ID = #{rcvrId}
+        ORDER BY FIRS_REG_DT DESC, ALRM_SN DESC
+        LIMIT #{maxRows}
+    </select>
+
+    <!--
+           수신자의 확인하지 않은 알람 건수를 조회
+           작성자 : ywkim
+      -->
+    <select id="selectUnconfirmedAlarmCount" resultType="int">
+        /* AlarmMapper.selectUnconfirmedAlarmCount 수신자의 확인하지 않은 알람 건수를 조회 */
+        SELECT COUNT(*)
+        FROM TB_ALRM_L
+        WHERE RCVR_ID = #{rcvrId}
+          AND CFM_YN = 'N'
+    </select>
+
+    <!--
+           사용자 테이블에 있는 사용자ID만 조회 (알람 수신자 검증)
+           작성자 : ywkim
+      -->
+    <select id="selectExistingUsrIdList" resultType="string">
+        /* AlarmMapper.selectExistingUsrIdList 사용자 테이블에 있는 사용자ID만 조회 (알람 수신자 검증) */
+        SELECT USR_ID
+        FROM TB_USR_M
+        WHERE USR_ID IN
+        <foreach collection="usrIdList" item="usrId" open="(" separator="," close=")">
+            #{usrId}
+        </foreach>
+    </select>
+
+    <!--
+           알람일련번호를 채번
+           작성자 : ywkim
+      -->
+    <select id="selectNextAlarmSn" resultType="long">
+        /* AlarmMapper.selectNextAlarmSn 알람일련번호를 채번 */
+        SELECT NEXTVAL('SQ_TB_ALRM_L_ALRM_SN')
+    </select>
+
+    <!--
+           알람을 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertAlarm">
+        /* AlarmMapper.insertAlarm 알람을 등록 */
+        INSERT INTO TB_ALRM_L (
+            ALRM_SN, RCVR_ID, ALRM_TYPE_CD, ALRM_TITL_NM, ALRM_CONT, PRGM_ID, CFM_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{alrmSn}, #{rcvrId}, #{item.alrmTypeCd}, #{item.alrmTitlNm}, #{item.alrmCont}, #{item.prgmId}, 'N',
+            #{usrId}, #{regDt}, #{usrId}, #{regDt}
+        )
+    </insert>
+
+    <!--
+           수신자의 미확인 알람을 확인 처리 (알람일련번호가 없으면 전체)
+           작성자 : ywkim
+      -->
+    <update id="updateAlarmConfirm">
+        /* AlarmMapper.updateAlarmConfirm 수신자의 미확인 알람을 확인 처리 (알람일련번호가 없으면 전체) */
+        UPDATE TB_ALRM_L
+           SET CFM_YN       = 'Y',
+               CFM_DTTM     = CURRENT_TIMESTAMP,
+               FINA_REGR_ID = #{rcvrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE RCVR_ID = #{rcvrId}
+           AND CFM_YN  = 'N'
+        <if test="alrmSn != null">
+           AND ALRM_SN = #{alrmSn}
+        </if>
+    </update>
+
+</mapper>

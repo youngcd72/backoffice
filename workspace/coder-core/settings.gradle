@@ -1,0 +1,7 @@
+rootProject.name = 'coder-core'
+
+include 'coder-core-common'
+include 'coder-core-security'
+include 'coder-core-db'
+include 'coder-core-redis'
+include 'coder-core-kms'

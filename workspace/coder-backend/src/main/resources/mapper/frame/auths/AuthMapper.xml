@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : AuthMapper.xml
+    Description   : 사용자 조회 MyBatis Mapper
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.05  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.common.frame.mapper.AuthMapper">
+
+    <!--
+           역할 컬럼: 적용기간 내 사용 중인 관리자 권한그룹(adminGroupCodes)에 속하면 ADMIN, 아니면 USER (사용자 별칭 U)
+           작성자 : ywkim
+      -->
+    <sql id="roleColumn">
+        <choose>
+            <when test="adminGroupCodes != null and !adminGroupCodes.isEmpty()">
+            CASE WHEN EXISTS (SELECT 1
+                                FROM TB_USR_AUTH_GRP_R R
+                                JOIN TB_AUTH_GRP_M G
+                                  ON G.USR_GRP_CD = R.USR_GRP_CD
+                               WHERE R.USR_ID = U.USR_ID
+                                 AND R.USR_GRP_CD IN
+                                     <foreach collection="adminGroupCodes" item="grpCd" open="(" separator="," close=")">#{grpCd}</foreach>
+                                 <include refid="CommonSql.validAuthGroupCondition"/>)
+                 THEN 'ADMIN'
+                 ELSE 'USER'
+            END
+            </when>
+            <otherwise>
+            'USER'
+            </otherwise>
+        </choose>
+    </sql>
+
+    <!--
+           로그인 검증용 사용자 한 건을 조회 (비밀번호 해시, 사용여부, 잠금여부, 로그인오류건수, 사용기간, 역할)
+           작성자 : ywkim
+      -->
+    <select id="selectLoginUser" resultType="kr.or.coder.common.frame.dto.auth.LoginUser">
+        /* AuthMapper.selectLoginUser 로그인 검증용 사용자 한 건을 조회 */
+        SELECT U.USR_ID,
+               U.USR_NM,
+               U.EML_ADDR,
+               <include refid="roleColumn"/> AS ROLE,
+               U.PWD,
+               U.USE_YN,
+               U.USR_LOCK_YN,
+               U.LGIN_ERR_CNT,
+               U.USE_ST_DT,
+               U.USE_END_DT
+          FROM TB_USR_M U
+         WHERE U.USR_ID = #{usrId}
+    </select>
+
+    <!--
+           전체 사용자 목록을 조회
+           작성자 : ywkim
+      -->
+    <select id="selectUserList" resultType="kr.or.coder.common.frame.dto.auth.UserProfileResponse">
+        /* AuthMapper.selectUserList 전체 사용자 목록을 조회 */
+        SELECT U.USR_ID       AS username,
+               U.USR_NM       AS name,
+               U.EML_ADDR     AS email,
+               <include refid="roleColumn"/> AS role,
+               CASE
+                   WHEN U.USE_YN = 'Y' AND COALESCE(U.USR_LOCK_YN, 'N') = 'N' THEN 'ACTIVE'
+                   ELSE 'INACTIVE'
+               END            AS status,
+               U.FIRS_REG_DT  AS createdAt,
+               U.FINA_REG_DT  AS updatedAt
+          FROM TB_USR_M U
+         ORDER BY U.USR_ID ASC
+    </select>
+
+    <!--
+           로그인 실패 시 로그인오류건수를 1 올리고, 기준 횟수에 도달하면 계정을 잠금
+           작성자 : ywkim
+      -->
+    <update id="updateLoginFail">
+        /* AuthMapper.updateLoginFail 로그인 실패 시 로그인오류건수를 1 올리고, 기준 횟수에 도달하면 계정을 잠금 */
+        UPDATE TB_USR_M
+           SET LGIN_ERR_CNT  = COALESCE(LGIN_ERR_CNT, 0) + 1,
+               USR_LOCK_YN   = CASE WHEN COALESCE(LGIN_ERR_CNT, 0) + 1 &gt;= #{maxLoginFailCount} THEN 'Y' ELSE USR_LOCK_YN END,
+               USR_LOCK_DTTM = CASE WHEN COALESCE(LGIN_ERR_CNT, 0) + 1 &gt;= #{maxLoginFailCount} THEN CURRENT_TIMESTAMP ELSE USR_LOCK_DTTM END
+         WHERE USR_ID = #{usrId}
+    </update>
+
+    <!--
+           로그인 성공 시 로그인오류건수를 0으로 되돌리고 최종접속일시를 기록
+           작성자 : ywkim
+      -->
+    <update id="updateLoginSuccess">
+        /* AuthMapper.updateLoginSuccess 로그인 성공 시 로그인오류건수를 0으로 되돌리고 최종접속일시를 기록 */
+        UPDATE TB_USR_M
+           SET LGIN_ERR_CNT  = 0,
+               FINA_ACC_DTTM = CURRENT_TIMESTAMP
+         WHERE USR_ID = #{usrId}
+    </update>
+
+</mapper>

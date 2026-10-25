@@ -1,0 +1,46 @@
+-- PostgreSQL / CLAUDE.md 5.x 표준 적용 (COMP_CD 제외)
+-- ---------------------------------------------------------------------
+-- TB_APND_FILE_M : 첨부파일기본 (ERD: SY0050M 시스템_첨부파일기본)
+--   공통 첨부파일 컴포넌트(ComFileUpload)의 파일 정보.
+--   FILE_ID 는 SQ_TB_APND_FILE_M_FILE_ID 로 채번하고, 같은 FILE_ID 안에서 FILE_SEQ 로 여러 파일을 구분한다.
+-- ---------------------------------------------------------------------
+CREATE SEQUENCE SQ_TB_APND_FILE_M_FILE_ID START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TB_APND_FILE_M (
+    FILE_ID               BIGINT       NOT NULL,
+    FILE_SEQ              INTEGER      NOT NULL,
+    APND_FILE_MNGE_NO     VARCHAR(30),
+    FILE_CLS_CD           VARCHAR(5),
+    FILE_CRS_NM           VARCHAR(200),
+    FILE_SIZE             BIGINT,
+    FILE_ORGN_NM          VARCHAR(200),
+    FILE_SRV_NM           VARCHAR(200),
+    FILE_EXPS_NM          VARCHAR(10),
+    USE_YN                CHAR(1)      NOT NULL DEFAULT 'N',
+    REFL_PRGM_ID          VARCHAR(50),
+    FIRS_REGR_ID          VARCHAR(10)  NOT NULL,
+    FIRS_REG_DT           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FINA_REGR_ID          VARCHAR(10)  NOT NULL,
+    FINA_REG_DT           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT TB_APND_FILE_M_PK PRIMARY KEY (FILE_ID, FILE_SEQ)
+);
+
+CREATE INDEX TB_APND_FILE_M_IX01 ON TB_APND_FILE_M (APND_FILE_MNGE_NO);
+
+COMMENT ON SEQUENCE SQ_TB_APND_FILE_M_FILE_ID IS '첨부파일기본 파일ID 채번';
+COMMENT ON TABLE  TB_APND_FILE_M IS '첨부파일기본 (ERD: SY0050M)';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_ID                IS '파일ID';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_SEQ               IS '파일순번';
+COMMENT ON COLUMN TB_APND_FILE_M.APND_FILE_MNGE_NO      IS '첨부파일관리번호';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_CLS_CD            IS '파일구분코드';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_CRS_NM            IS '파일경로명';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_SIZE              IS '파일사이즈';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_ORGN_NM           IS '파일원본명';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_SRV_NM            IS '파일서버명';
+COMMENT ON COLUMN TB_APND_FILE_M.FILE_EXPS_NM           IS '파일확장자명';
+COMMENT ON COLUMN TB_APND_FILE_M.USE_YN                 IS '사용여부';
+COMMENT ON COLUMN TB_APND_FILE_M.REFL_PRGM_ID           IS '반영프로그램ID';
+COMMENT ON COLUMN TB_APND_FILE_M.FIRS_REGR_ID           IS '최초등록자ID';
+COMMENT ON COLUMN TB_APND_FILE_M.FIRS_REG_DT            IS '최초등록일시';
+COMMENT ON COLUMN TB_APND_FILE_M.FINA_REGR_ID           IS '최종등록자ID';
+COMMENT ON COLUMN TB_APND_FILE_M.FINA_REG_DT            IS '최종등록일시';

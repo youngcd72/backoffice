@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : MenuMapper.xml
+    Description   : SYPG020 메뉴관리 MyBatis Mapper (TB_MENU_M)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.menu.mapper.MenuMapper">
+
+    <!--
+           전체 메뉴 목록을 정렬순번 순으로 조회 (트리 구성·조건 필터링은 화면에서 처리)
+           작성자 : ywkim
+      -->
+    <select id="selectMenuList" resultType="kr.or.coder.biz.system.menu.dto.MenuResponse">
+        /* MenuMapper.selectMenuList 전체 메뉴 목록을 정렬순번 순으로 조회 */
+        SELECT MENU_ID,
+               COALESCE(MENU_NM, '')      AS MENU_NM,
+               COALESCE(UPPR_MENU_ID, '') AS UPPR_MENU_ID,
+               ALIN_SEQ,
+               COALESCE(MENU_TYPE_CD, '') AS MENU_TYPE_CD,
+               USE_YN,
+               COALESCE(PRGM_ID, '')      AS PRGM_ID,
+               COALESCE(RMK, '')          AS RMK
+        FROM TB_MENU_M
+        ORDER BY ALIN_SEQ NULLS LAST, MENU_ID
+    </select>
+
+    <!--
+           메뉴ID가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsMenu" resultType="boolean">
+        /* MenuMapper.existsMenu 메뉴ID가 등록되어 있는지 판별 */
+        SELECT EXISTS (
+            SELECT 1
+              FROM TB_MENU_M
+             WHERE MENU_ID = #{menuId}
+        )
+    </select>
+
+    <!--
+           메뉴를 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertMenu">
+        /* MenuMapper.insertMenu 메뉴를 등록 */
+        INSERT INTO TB_MENU_M (
+            MENU_ID, MENU_NM, UPPR_MENU_ID, ALIN_SEQ, MENU_TYPE_CD, USE_YN, PRGM_ID, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.menuId}, #{item.menuNm}, NULLIF(#{item.upprMenuId}, ''), #{item.alinSeq},
+            NULLIF(#{item.menuTypeCd}, ''), #{item.useYn}, NULLIF(#{item.prgmId}, ''), NULLIF(#{item.rmk}, ''),
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           메뉴를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateMenu">
+        /* MenuMapper.updateMenu 메뉴를 수정 */
+        UPDATE TB_MENU_M
+           SET MENU_NM      = #{item.menuNm},
+               UPPR_MENU_ID = NULLIF(#{item.upprMenuId}, ''),
+               ALIN_SEQ     = #{item.alinSeq},
+               MENU_TYPE_CD = NULLIF(#{item.menuTypeCd}, ''),
+               USE_YN       = #{item.useYn},
+               PRGM_ID      = NULLIF(#{item.prgmId}, ''),
+               RMK          = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID = #{usrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE MENU_ID = #{item.menuId}
+    </update>
+
+    <!--
+           메뉴를 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteMenu">
+        /* MenuMapper.deleteMenu 메뉴를 삭제 */
+        DELETE FROM TB_MENU_M
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <!--
+           메뉴의 즐겨찾기를 모두 삭제 (메뉴 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteMenuFavoriteList">
+        /* MenuMapper.deleteMenuFavoriteList 메뉴의 즐겨찾기를 모두 삭제 (메뉴 삭제 시) */
+        DELETE FROM TB_PRGM_FAV_L
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <!--
+           메뉴의 권한그룹 메뉴 권한을 모두 삭제 (메뉴 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteMenuAuthGroupList">
+        /* MenuMapper.deleteMenuAuthGroupList 메뉴의 권한그룹 메뉴 권한을 모두 삭제 (메뉴 삭제 시) */
+        DELETE FROM TB_AUTH_GRP_MENU_R
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <!--
+           메뉴의 사용자 메뉴 권한을 모두 삭제 (메뉴 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteMenuUserAuthList">
+        /* MenuMapper.deleteMenuUserAuthList 메뉴의 사용자 메뉴 권한을 모두 삭제 (메뉴 삭제 시) */
+        DELETE FROM TB_USR_MENU_R
+         WHERE MENU_ID = #{menuId}
+    </delete>
+
+    <!--
+           하위 메뉴가 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsChildMenu" resultType="boolean">
+        /* MenuMapper.existsChildMenu 하위 메뉴가 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_MENU_M WHERE UPPR_MENU_ID = #{menuId})
+    </select>
+
+</mapper>

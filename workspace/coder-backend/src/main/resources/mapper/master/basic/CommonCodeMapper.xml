@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : CommonCodeMapper.xml
+    Description   : MSBS010 공통코드관리 MyBatis Mapper (TB_COMM_CD_M, TB_COMM_CD_D)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.master.basic.mapper.CommonCodeMapper">
+
+    <!--
+           조회 조건에 맞는 공통코드 분류 목록을 업무모듈·정렬순번 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectCommonCodeList" resultType="kr.or.coder.biz.master.basic.dto.CommonCodeResponse">
+        /* CommonCodeMapper.selectCommonCodeList 조회 조건에 맞는 공통코드 분류 목록을 업무모듈·정렬순번 순으로 조회 */
+        SELECT WRK_MDUL_CD,
+               COMM_CTG_CD,
+               COALESCE(COMM_CTG_NM, '') AS COMM_CTG_NM,
+               COALESCE(COMM_PROP_NM_1, '') AS COMM_PROP_NM_1,
+               COALESCE(COMM_PROP_NM_2, '') AS COMM_PROP_NM_2,
+               COALESCE(COMM_PROP_NM_3, '') AS COMM_PROP_NM_3,
+               COALESCE(COMM_PROP_NM_4, '') AS COMM_PROP_NM_4,
+               COALESCE(COMM_PROP_NM_5, '') AS COMM_PROP_NM_5,
+               COALESCE(COMM_PROP_NM_6, '') AS COMM_PROP_NM_6,
+               COALESCE(COMM_PROP_NM_7, '') AS COMM_PROP_NM_7,
+               COALESCE(COMM_PROP_NM_8, '') AS COMM_PROP_NM_8,
+               COALESCE(COMM_PROP_NM_9, '') AS COMM_PROP_NM_9,
+               COALESCE(COMM_PROP_NM_10, '') AS COMM_PROP_NM_10,
+               USE_YN,
+               USR_MNGE_YN,
+               ALIN_SEQ,
+               COALESCE(RMK, '') AS RMK
+        FROM TB_COMM_CD_M
+        <where>
+            <if test="wrkMdulCd != null and wrkMdulCd != ''">
+                AND WRK_MDUL_CD = #{wrkMdulCd}
+            </if>
+            <if test="commCtgCd != null and commCtgCd.trim() != ''">
+                AND UPPER(COMM_CTG_CD) LIKE '%' || UPPER(TRIM(#{commCtgCd})) || '%'
+            </if>
+            <if test="commCtgNm != null and commCtgNm.trim() != ''">
+                AND COMM_CTG_NM LIKE '%' || TRIM(#{commCtgNm}) || '%'
+            </if>
+        </where>
+        ORDER BY WRK_MDUL_CD, ALIN_SEQ NULLS LAST, COMM_CTG_CD
+    </select>
+
+    <!--
+           공통분류의 상세코드 목록을 정렬순번 순으로 조회 (useYn=Y 이면 사용 중인 분류의 사용 중인 코드만)
+           작성자 : ywkim
+      -->
+    <select id="selectCommonCodeDetailList" resultType="kr.or.coder.biz.master.basic.dto.CommonCodeDetailResponse">
+        /* CommonCodeMapper.selectCommonCodeDetailList 공통분류의 상세코드 목록을 정렬순번 순으로 조회 */
+        SELECT D.WRK_MDUL_CD,
+               D.COMM_CTG_CD,
+               D.COMM_CTG_DTL_CD,
+               COALESCE(D.COMM_CTG_DTL_NM, '') AS COMM_CTG_DTL_NM,
+               COALESCE(D.COMM_PROP_CONT_1, '') AS COMM_PROP_CONT_1,
+               COALESCE(D.COMM_PROP_CONT_2, '') AS COMM_PROP_CONT_2,
+               COALESCE(D.COMM_PROP_CONT_3, '') AS COMM_PROP_CONT_3,
+               COALESCE(D.COMM_PROP_CONT_4, '') AS COMM_PROP_CONT_4,
+               COALESCE(D.COMM_PROP_CONT_5, '') AS COMM_PROP_CONT_5,
+               COALESCE(D.COMM_PROP_CONT_6, '') AS COMM_PROP_CONT_6,
+               COALESCE(D.COMM_PROP_CONT_7, '') AS COMM_PROP_CONT_7,
+               COALESCE(D.COMM_PROP_CONT_8, '') AS COMM_PROP_CONT_8,
+               COALESCE(D.COMM_PROP_CONT_9, '') AS COMM_PROP_CONT_9,
+               COALESCE(D.COMM_PROP_CONT_10, '') AS COMM_PROP_CONT_10,
+               COALESCE(D.RMK, '') AS RMK,
+               D.USE_YN,
+               D.ALIN_SEQ
+        FROM TB_COMM_CD_D D
+        JOIN TB_COMM_CD_M M
+          ON M.WRK_MDUL_CD = D.WRK_MDUL_CD
+         AND M.COMM_CTG_CD = D.COMM_CTG_CD
+        WHERE D.WRK_MDUL_CD = #{wrkMdulCd}
+          AND D.COMM_CTG_CD = #{commCtgCd}
+        <if test="useYn != null and useYn != ''">
+          AND M.USE_YN = #{useYn}
+          AND D.USE_YN = #{useYn}
+        </if>
+        ORDER BY D.ALIN_SEQ NULLS LAST, D.COMM_CTG_DTL_CD
+    </select>
+
+    <!--
+           공통코드 분류가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsCommonCode" resultType="boolean">
+        /* CommonCodeMapper.existsCommonCode 공통코드 분류가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_COMM_CD_M WHERE WRK_MDUL_CD = #{wrkMdulCd} AND COMM_CTG_CD = #{commCtgCd})
+    </select>
+
+    <!--
+           공통코드 분류를 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertCommonCode">
+        /* CommonCodeMapper.insertCommonCode 공통코드 분류를 등록 */
+        INSERT INTO TB_COMM_CD_M (
+            WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_NM,
+            COMM_PROP_NM_1, COMM_PROP_NM_2, COMM_PROP_NM_3, COMM_PROP_NM_4, COMM_PROP_NM_5, COMM_PROP_NM_6, COMM_PROP_NM_7, COMM_PROP_NM_8, COMM_PROP_NM_9, COMM_PROP_NM_10,
+            USE_YN, USR_MNGE_YN, ALIN_SEQ, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.wrkMdulCd}, #{item.commCtgCd}, #{item.commCtgNm},
+            NULLIF(#{item.commPropNm1}, ''), NULLIF(#{item.commPropNm2}, ''), NULLIF(#{item.commPropNm3}, ''), NULLIF(#{item.commPropNm4}, ''), NULLIF(#{item.commPropNm5}, ''), NULLIF(#{item.commPropNm6}, ''), NULLIF(#{item.commPropNm7}, ''), NULLIF(#{item.commPropNm8}, ''), NULLIF(#{item.commPropNm9}, ''), NULLIF(#{item.commPropNm10}, ''),
+            #{item.useYn}, #{item.usrMngeYn}, #{item.alinSeq}, NULLIF(#{item.rmk}, ''),
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           공통코드 분류를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateCommonCode">
+        /* CommonCodeMapper.updateCommonCode 공통코드 분류를 수정 */
+        UPDATE TB_COMM_CD_M
+           SET COMM_CTG_NM      = #{item.commCtgNm},
+               COMM_PROP_NM_1  = NULLIF(#{item.commPropNm1}, ''),
+               COMM_PROP_NM_2  = NULLIF(#{item.commPropNm2}, ''),
+               COMM_PROP_NM_3  = NULLIF(#{item.commPropNm3}, ''),
+               COMM_PROP_NM_4  = NULLIF(#{item.commPropNm4}, ''),
+               COMM_PROP_NM_5  = NULLIF(#{item.commPropNm5}, ''),
+               COMM_PROP_NM_6  = NULLIF(#{item.commPropNm6}, ''),
+               COMM_PROP_NM_7  = NULLIF(#{item.commPropNm7}, ''),
+               COMM_PROP_NM_8  = NULLIF(#{item.commPropNm8}, ''),
+               COMM_PROP_NM_9  = NULLIF(#{item.commPropNm9}, ''),
+               COMM_PROP_NM_10 = NULLIF(#{item.commPropNm10}, ''),
+               USE_YN           = #{item.useYn},
+               USR_MNGE_YN      = #{item.usrMngeYn},
+               ALIN_SEQ         = #{item.alinSeq},
+               RMK              = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID     = #{usrId},
+               FINA_REG_DT      = CURRENT_TIMESTAMP
+         WHERE WRK_MDUL_CD = #{item.wrkMdulCd}
+           AND COMM_CTG_CD = #{item.commCtgCd}
+    </update>
+
+    <!--
+           공통코드 분류를 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteCommonCode">
+        /* CommonCodeMapper.deleteCommonCode 공통코드 분류를 삭제 */
+        DELETE FROM TB_COMM_CD_M
+         WHERE WRK_MDUL_CD = #{wrkMdulCd}
+           AND COMM_CTG_CD = #{commCtgCd}
+    </delete>
+
+    <!--
+           공통코드 상세가 등록되어 있는지 판별 (상세코드가 없으면 분류에 코드가 1건이라도 있는지)
+           작성자 : ywkim
+      -->
+    <select id="existsCommonCodeDetail" resultType="boolean">
+        /* CommonCodeMapper.existsCommonCodeDetail 공통코드 상세가 등록되어 있는지 판별 (상세코드가 없으면 분류에 코드가 1건이라도 있는지) */
+        SELECT EXISTS (
+            SELECT 1
+              FROM TB_COMM_CD_D
+             WHERE WRK_MDUL_CD = #{wrkMdulCd}
+               AND COMM_CTG_CD = #{commCtgCd}
+            <if test="commCtgDtlCd != null">
+               AND COMM_CTG_DTL_CD = #{commCtgDtlCd}
+            </if>
+        )
+    </select>
+
+    <!--
+           공통코드 상세를 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertCommonCodeDetail">
+        /* CommonCodeMapper.insertCommonCodeDetail 공통코드 상세를 등록 */
+        INSERT INTO TB_COMM_CD_D (
+            WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD, COMM_CTG_DTL_NM,
+            COMM_PROP_CONT_1, COMM_PROP_CONT_2, COMM_PROP_CONT_3, COMM_PROP_CONT_4, COMM_PROP_CONT_5, COMM_PROP_CONT_6, COMM_PROP_CONT_7, COMM_PROP_CONT_8, COMM_PROP_CONT_9, COMM_PROP_CONT_10,
+            RMK, USE_YN, ALIN_SEQ,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.wrkMdulCd}, #{item.commCtgCd}, #{item.commCtgDtlCd}, #{item.commCtgDtlNm},
+            NULLIF(#{item.commPropCont1}, ''), NULLIF(#{item.commPropCont2}, ''), NULLIF(#{item.commPropCont3}, ''), NULLIF(#{item.commPropCont4}, ''), NULLIF(#{item.commPropCont5}, ''), NULLIF(#{item.commPropCont6}, ''), NULLIF(#{item.commPropCont7}, ''), NULLIF(#{item.commPropCont8}, ''), NULLIF(#{item.commPropCont9}, ''), NULLIF(#{item.commPropCont10}, ''),
+            NULLIF(#{item.rmk}, ''), #{item.useYn}, #{item.alinSeq},
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           공통코드 상세를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateCommonCodeDetail">
+        /* CommonCodeMapper.updateCommonCodeDetail 공통코드 상세를 수정 */
+        UPDATE TB_COMM_CD_D
+           SET COMM_CTG_DTL_NM  = #{item.commCtgDtlNm},
+               COMM_PROP_CONT_1  = NULLIF(#{item.commPropCont1}, ''),
+               COMM_PROP_CONT_2  = NULLIF(#{item.commPropCont2}, ''),
+               COMM_PROP_CONT_3  = NULLIF(#{item.commPropCont3}, ''),
+               COMM_PROP_CONT_4  = NULLIF(#{item.commPropCont4}, ''),
+               COMM_PROP_CONT_5  = NULLIF(#{item.commPropCont5}, ''),
+               COMM_PROP_CONT_6  = NULLIF(#{item.commPropCont6}, ''),
+               COMM_PROP_CONT_7  = NULLIF(#{item.commPropCont7}, ''),
+               COMM_PROP_CONT_8  = NULLIF(#{item.commPropCont8}, ''),
+               COMM_PROP_CONT_9  = NULLIF(#{item.commPropCont9}, ''),
+               COMM_PROP_CONT_10 = NULLIF(#{item.commPropCont10}, ''),
+               RMK              = NULLIF(#{item.rmk}, ''),
+               USE_YN           = #{item.useYn},
+               ALIN_SEQ         = #{item.alinSeq},
+               FINA_REGR_ID     = #{usrId},
+               FINA_REG_DT      = CURRENT_TIMESTAMP
+         WHERE WRK_MDUL_CD     = #{item.wrkMdulCd}
+           AND COMM_CTG_CD     = #{item.commCtgCd}
+           AND COMM_CTG_DTL_CD = #{item.commCtgDtlCd}
+    </update>
+
+</mapper>

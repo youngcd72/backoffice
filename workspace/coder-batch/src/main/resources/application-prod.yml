@@ -1,0 +1,24 @@
+# -------------------------------------------------------------------
+# prod - 운영 서버
+#   DB 접속 정보와 JWT secret은 기본값 없이 환경변수로만 받는다 (누락 시 기동 실패).
+#   JVM 옵션 -Duser.timezone=Asia/Seoul 을 함께 지정한다.
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      jdbc-url: ${CODER_BATCH_DB_URL}
+      username: ${CODER_BATCH_DB_USERNAME}
+      password: ${CODER_BATCH_DB_PASSWORD}
+
+coder:
+  security:
+    jwt:
+      secret: ${CODER_JWT_SECRET}
+
+  swagger:
+    enabled: false
+
+management:
+  endpoint:
+    health:
+      show-details: never

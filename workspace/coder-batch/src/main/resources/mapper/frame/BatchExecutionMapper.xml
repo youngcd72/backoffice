@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : BatchExecutionMapper.xml
+    Description   : 배치 실행내역(TB_DSPT_EXEC_L) 조회/등록/수정/삭제 Mapper
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.09  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.batch.frame.mapper.BatchExecutionMapper">
+
+    <!--
+           배치실행내역(TB_DSPT_EXEC_L) 조회 컬럼
+           작성자 : ywkim
+      -->
+    <sql id="batchExecutionColumns">
+            E.DSPT_EXEC_SN,
+            E.JOB_ID,
+            J.JOB_NM,
+            J.WRK_MDUL_CD,
+            E.JOB_EXEC_ID,
+            E.EXEC_CLS_CD,
+            E.EXEC_STAT_CD,
+            E.EXEC_ST_DTTM,
+            E.EXEC_END_DTTM,
+            E.PROC_CNT,
+            E.SUCC_CNT,
+            E.FAIL_CNT,
+            E.ERR_MSG_CONT,
+            E.EXEC_SRV_NM,
+            E.FIRS_REGR_ID
+    </sql>
+
+    <!--
+           배치실행내역 목록/건수 공통 검색조건
+           작성자 : ywkim
+      -->
+    <sql id="batchExecutionSearchCondition">
+        <where>
+            <if test="stDt != null and stDt != ''">
+                AND E.EXEC_ST_DTTM &gt;= TO_TIMESTAMP(#{stDt}, 'YYYYMMDD')
+            </if>
+            <if test="endDt != null and endDt != ''">
+                AND E.EXEC_ST_DTTM &lt; TO_TIMESTAMP(#{endDt}, 'YYYYMMDD') + INTERVAL '1 day'
+            </if>
+            <if test="wrkMdulCd != null and wrkMdulCd != ''">
+                AND J.WRK_MDUL_CD = #{wrkMdulCd}
+            </if>
+            <if test="jobId != null and jobId != ''">
+                AND E.JOB_ID = #{jobId}
+            </if>
+            <if test="execStatCd != null and execStatCd != ''">
+                AND E.EXEC_STAT_CD = #{execStatCd}
+            </if>
+            <if test="execClsCd != null and execClsCd != ''">
+                AND E.EXEC_CLS_CD = #{execClsCd}
+            </if>
+        </where>
+    </sql>
+
+    <!--
+           검색 조건에 맞는 실행 이력 목록을 페이징 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchExecutionList" resultType="kr.or.coder.batch.frame.dto.BatchExecutionResponse">
+        /* BatchExecutionMapper.selectBatchExecutionList 검색 조건에 맞는 실행 이력 목록을 페이징 조회한다. */
+        SELECT
+            <include refid="batchExecutionColumns"/>
+        FROM TB_DSPT_EXEC_L E
+        JOIN TB_DSPT_JOB_M J ON J.JOB_ID = E.JOB_ID
+        <include refid="batchExecutionSearchCondition"/>
+        ORDER BY E.DSPT_EXEC_SN DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!--
+           검색 조건에 맞는 실행 이력 전체 건수를 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchExecutionCount" resultType="long">
+        /* BatchExecutionMapper.selectBatchExecutionCount 검색 조건에 맞는 실행 이력 전체 건수를 조회한다. */
+        SELECT COUNT(*)
+        FROM TB_DSPT_EXEC_L E
+        JOIN TB_DSPT_JOB_M J ON J.JOB_ID = E.JOB_ID
+        <include refid="batchExecutionSearchCondition"/>
+    </select>
+
+    <!--
+           배치실행일련번호로 실행 이력 1건을 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchExecution" resultType="kr.or.coder.batch.frame.dto.BatchExecutionResponse">
+        /* BatchExecutionMapper.selectBatchExecution 배치실행일련번호로 실행 이력 1건을 조회한다. */
+        SELECT
+            <include refid="batchExecutionColumns"/>
+        FROM TB_DSPT_EXEC_L E
+        JOIN TB_DSPT_JOB_M J ON J.JOB_ID = E.JOB_ID
+        WHERE E.DSPT_EXEC_SN = #{dsptExecSn}
+    </select>
+
+    <!--
+           클러스터 전체에서 해당 Quartz Job이 실행 중인지(QRTZ_FIRED_TRIGGERS) 확인한다.
+           작성자 : ywkim
+      -->
+    <select id="selectFiredTriggerCount" resultType="int">
+        /* BatchExecutionMapper.selectFiredTriggerCount 클러스터 전체에서 해당 Quartz Job이 실행 중인지(QRTZ_FIRED_TRIGGERS) 확인한다. */
+        SELECT COUNT(*)
+        FROM QRTZ_FIRED_TRIGGERS
+        WHERE SCHED_NAME = #{schedNm}
+          AND JOB_NAME   = #{jobId}
+          AND JOB_GROUP  = #{wrkMdulCd}
+          AND STATE      = 'EXECUTING'
+    </select>
+
+    <!--
+           실행 이력을 등록한다.
+           작성자 : ywkim
+      -->
+    <insert id="insertBatchExecution" parameterType="kr.or.coder.batch.frame.entity.BatchExecution">
+        /* BatchExecutionMapper.insertBatchExecution 실행 이력을 등록한다. */
+        <selectKey keyProperty="dsptExecSn" resultType="long" order="BEFORE">
+            SELECT NEXTVAL('SQ_TB_DSPT_EXEC_L_DSPT_EXEC_SN')
+        </selectKey>
+        INSERT INTO TB_DSPT_EXEC_L (
+            DSPT_EXEC_SN,
+            JOB_ID,
+            JOB_EXEC_ID,
+            EXEC_CLS_CD,
+            EXEC_STAT_CD,
+            EXEC_ST_DTTM,
+            EXEC_END_DTTM,
+            PROC_CNT,
+            SUCC_CNT,
+            FAIL_CNT,
+            ERR_MSG_CONT,
+            EXEC_SRV_NM,
+            FIRS_REGR_ID,
+            FIRS_REG_DT,
+            FINA_REGR_ID,
+            FINA_REG_DT
+        ) VALUES (
+            #{dsptExecSn},
+            #{jobId},
+            #{jobExecId},
+            #{execClsCd},
+            #{execStatCd},
+            #{execStDttm},
+            #{execEndDttm},
+            #{procCnt},
+            #{succCnt},
+            #{failCnt},
+            #{errMsgCont},
+            #{execSrvNm},
+            #{firsRegrId},
+            CURRENT_TIMESTAMP,
+            #{firsRegrId},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           JOB_EXEC_ID 기준으로 종료 정보(상태, 종료일시, 건수, 오류메시지)를 갱신한다.
+           작성자 : ywkim
+      -->
+    <update id="updateBatchExecution" parameterType="kr.or.coder.batch.frame.entity.BatchExecution">
+        /* BatchExecutionMapper.updateBatchExecution JOB_EXEC_ID 기준으로 종료 정보(상태, 종료일시, 건수, 오류메시지)를 갱신한다. */
+        UPDATE TB_DSPT_EXEC_L
+           SET EXEC_STAT_CD  = #{execStatCd},
+               EXEC_END_DTTM = #{execEndDttm},
+               PROC_CNT      = #{procCnt},
+               SUCC_CNT      = #{succCnt},
+               FAIL_CNT      = #{failCnt},
+               ERR_MSG_CONT  = #{errMsgCont},
+               FINA_REGR_ID  = #{finaRegrId},
+               FINA_REG_DT   = CURRENT_TIMESTAMP
+         WHERE JOB_EXEC_ID = #{jobExecId}
+    </update>
+
+    <!--
+           배치직무 ID에 해당하는 실행 이력을 모두 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchExecutionByJobId">
+        /* BatchExecutionMapper.deleteBatchExecutionByJobId 배치직무 ID에 해당하는 실행 이력을 모두 삭제한다. */
+        DELETE FROM TB_DSPT_EXEC_L
+         WHERE JOB_ID = #{jobId}
+    </delete>
+
+</mapper>

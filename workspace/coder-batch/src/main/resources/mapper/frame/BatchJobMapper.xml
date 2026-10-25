@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : BatchJobMapper.xml
+    Description   : 배치직무기본(TB_DSPT_JOB_M) 조회/등록/수정/삭제 Mapper
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.09  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.batch.frame.mapper.BatchJobMapper">
+
+    <!--
+           배치직무(J)와 최종 실행내역(L, 직무별 최근 실행 1건) 조회 컬럼과 조인
+           작성자 : ywkim
+      -->
+    <sql id="batchJobWithLastExecution">
+        SELECT J.JOB_ID,
+               J.JOB_NM,
+               J.EXEC_CLASS_NM,
+               J.WRK_MDUL_CD,
+               J.SCHE_EXPR,
+               J.MSFR_PLCY_CD,
+               J.MLT_EXEC_YN,
+               J.JOB_PARM_CONT,
+               J.USE_YN,
+               J.RMK,
+               J.REFL_PRGM_ID,
+               J.FIRS_REGR_ID,
+               J.FIRS_REG_DT,
+               J.FINA_REGR_ID,
+               J.FINA_REG_DT,
+               L.DSPT_EXEC_SN  AS LAST_DSPT_EXEC_SN,
+               L.EXEC_STAT_CD  AS LAST_EXEC_STAT_CD,
+               L.EXEC_ST_DTTM  AS LAST_EXEC_ST_DTTM,
+               L.EXEC_END_DTTM AS LAST_EXEC_END_DTTM,
+               L.PROC_CNT      AS LAST_PROC_CNT,
+               L.SUCC_CNT      AS LAST_SUCC_CNT,
+               L.FAIL_CNT      AS LAST_FAIL_CNT,
+               L.ERR_MSG_CONT  AS LAST_ERR_MSG_CONT
+        FROM TB_DSPT_JOB_M J
+        LEFT JOIN LATERAL (
+            SELECT DSPT_EXEC_SN, EXEC_STAT_CD, EXEC_ST_DTTM, EXEC_END_DTTM,
+                   PROC_CNT, SUCC_CNT, FAIL_CNT, ERR_MSG_CONT
+            FROM TB_DSPT_EXEC_L
+            WHERE JOB_ID = J.JOB_ID
+            ORDER BY EXEC_ST_DTTM DESC, DSPT_EXEC_SN DESC
+            LIMIT 1
+        ) L ON TRUE
+    </sql>
+
+    <!--
+           검색 조건에 맞는 배치직무 목록을 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchJobList" resultType="kr.or.coder.batch.frame.entity.BatchJob">
+        /* BatchJobMapper.selectBatchJobList 검색 조건에 맞는 배치직무 목록을 조회한다. */
+        <include refid="batchJobWithLastExecution"/>
+        <where>
+            <if test="wrkMdulCd != null and wrkMdulCd != ''">
+                AND J.WRK_MDUL_CD = #{wrkMdulCd}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND J.USE_YN = #{useYn}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (J.JOB_ID ILIKE '%' || #{keyword} || '%' OR J.JOB_NM ILIKE '%' || #{keyword} || '%')
+            </if>
+            <if test="lastExecDt != null and lastExecDt != ''">
+                AND L.EXEC_ST_DTTM &gt;= TO_DATE(#{lastExecDt}, 'YYYYMMDD')
+                AND L.EXEC_ST_DTTM &lt; TO_DATE(#{lastExecDt}, 'YYYYMMDD') + 1
+            </if>
+            <if test="lastExecStatCd != null and lastExecStatCd != ''">
+                AND L.EXEC_STAT_CD = #{lastExecStatCd}
+            </if>
+        </where>
+        ORDER BY J.WRK_MDUL_CD, J.JOB_ID
+    </select>
+
+    <!--
+           배치직무 1건을 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchJob" resultType="kr.or.coder.batch.frame.entity.BatchJob">
+        /* BatchJobMapper.selectBatchJob 배치직무 1건을 조회한다. */
+        <include refid="batchJobWithLastExecution"/>
+        WHERE J.JOB_ID = #{jobId}
+    </select>
+
+    <!--
+           배치직무를 등록한다.
+           작성자 : ywkim
+      -->
+    <insert id="insertBatchJob" parameterType="kr.or.coder.batch.frame.entity.BatchJob">
+        /* BatchJobMapper.insertBatchJob 배치직무를 등록한다. */
+        INSERT INTO TB_DSPT_JOB_M (
+            JOB_ID,
+            JOB_NM,
+            EXEC_CLASS_NM,
+            WRK_MDUL_CD,
+            SCHE_EXPR,
+            MSFR_PLCY_CD,
+            MLT_EXEC_YN,
+            JOB_PARM_CONT,
+            USE_YN,
+            RMK,
+            REFL_PRGM_ID,
+            FIRS_REGR_ID,
+            FIRS_REG_DT,
+            FINA_REGR_ID,
+            FINA_REG_DT
+        ) VALUES (
+            #{jobId},
+            #{jobNm},
+            #{execClassNm},
+            #{wrkMdulCd},
+            #{scheExpr},
+            #{msfrPlcyCd},
+            #{mltExecYn},
+            #{jobParmCont},
+            #{useYn},
+            #{rmk},
+            #{reflPrgmId},
+            #{firsRegrId},
+            CURRENT_TIMESTAMP,
+            #{firsRegrId},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           배치직무를 수정한다.
+           작성자 : ywkim
+      -->
+    <update id="updateBatchJob" parameterType="kr.or.coder.batch.frame.entity.BatchJob">
+        /* BatchJobMapper.updateBatchJob 배치직무를 수정한다. */
+        UPDATE TB_DSPT_JOB_M
+           SET JOB_NM        = #{jobNm},
+               EXEC_CLASS_NM = #{execClassNm},
+               WRK_MDUL_CD   = #{wrkMdulCd},
+               SCHE_EXPR     = #{scheExpr},
+               MSFR_PLCY_CD  = #{msfrPlcyCd},
+               MLT_EXEC_YN   = #{mltExecYn},
+               JOB_PARM_CONT = #{jobParmCont},
+               USE_YN        = #{useYn},
+               RMK           = #{rmk},
+               REFL_PRGM_ID  = #{reflPrgmId},
+               FINA_REGR_ID  = #{finaRegrId},
+               FINA_REG_DT   = CURRENT_TIMESTAMP
+         WHERE JOB_ID = #{jobId}
+    </update>
+
+    <!--
+           배치직무를 삭제한다.
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchJob">
+        /* BatchJobMapper.deleteBatchJob 배치직무를 삭제한다. */
+        DELETE FROM TB_DSPT_JOB_M
+         WHERE JOB_ID = #{jobId}
+    </delete>
+
+</mapper>

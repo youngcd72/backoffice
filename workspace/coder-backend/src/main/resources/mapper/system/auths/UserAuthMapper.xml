@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : UserAuthMapper.xml
+    Description   : SYAU010 사용자권한관리 MyBatis Mapper (TB_USR_M, TB_USR_MENU_R, TB_USR_CMPN_R)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.auths.mapper.UserAuthMapper">
+
+    <!--
+           조회 조건에 맞는 사용자 목록을 사용자ID 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectUserAuthList" resultType="kr.or.coder.biz.system.auths.dto.UserAuthResponse">
+        /* UserAuthMapper.selectUserAuthList 조회 조건에 맞는 사용자 목록을 사용자ID 순으로 조회 */
+        SELECT USR_ID,
+               COALESCE(USR_NM, '')      AS USR_NM,
+               COALESCE(EMP_NO, '')      AS EMP_NO,
+               COALESCE(DEPT_CD, '')     AS DEPT_CD,
+               COALESCE(EML_ADDR, '')    AS EML_ADDR,
+               COALESCE(MOBL_NO, '')     AS MOBL_NO,
+               COALESCE(USR_STAT_CD, '') AS USR_STAT_CD,
+               COALESCE(USR_LOCK_YN, 'N') AS USR_LOCK_YN,
+               COALESCE(USR_CLS_CD, '')  AS USR_CLS_CD,
+               COALESCE(ECOM_DT, '')     AS ECOM_DT,
+               COALESCE(RESI_DT, '')     AS RESI_DT,
+               COALESCE(USE_ST_DT, '')   AS ST_DT,
+               COALESCE(USE_END_DT, '')  AS END_DT,
+               USE_YN
+        FROM TB_USR_M
+        <where>
+            <if test="usrId != null and usrId.trim() != ''">
+                AND UPPER(USR_ID) LIKE '%' || UPPER(TRIM(#{usrId})) || '%'
+            </if>
+            <if test="usrNm != null and usrNm.trim() != ''">
+                AND USR_NM LIKE '%' || TRIM(#{usrNm}) || '%'
+            </if>
+            <if test="usrClsCd != null and usrClsCd != ''">
+                AND USR_CLS_CD = #{usrClsCd}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND USE_YN = #{useYn}
+            </if>
+        </where>
+        ORDER BY USR_ID
+    </select>
+
+    <!--
+           사용자ID가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsUser" resultType="boolean">
+        /* UserAuthMapper.existsUser 사용자ID가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_USR_M WHERE USR_ID = #{usrId})
+    </select>
+
+    <!--
+           사용자를 등록 (초기 비밀번호, 최초로그인여부 Y, 로그인오류건수 0)
+           작성자 : ywkim
+      -->
+    <insert id="insertUser">
+        /* UserAuthMapper.insertUser 사용자를 등록 (초기 비밀번호, 최초로그인여부 Y, 로그인오류건수 0) */
+        INSERT INTO TB_USR_M (
+            USR_ID, USR_NM, PWD, EMP_NO, DEPT_CD, EML_ADDR, MOBL_NO,
+            USR_STAT_CD, USR_LOCK_YN, USR_CLS_CD, ECOM_DT, RESI_DT, USE_ST_DT, USE_END_DT, USE_YN,
+            FIRS_LGIN_YN, LGIN_ERR_CNT,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrId}, #{item.usrNm}, #{pwd}, NULLIF(#{item.empNo}, ''), NULLIF(#{item.deptCd}, ''),
+            NULLIF(#{item.emlAddr}, ''), NULLIF(#{item.moblNo}, ''),
+            NULLIF(#{item.usrStatCd}, ''), COALESCE(NULLIF(#{item.usrLockYn}, ''), 'N'), NULLIF(#{item.usrClsCd}, ''),
+            NULLIF(#{item.ecomDt}, ''), NULLIF(#{item.resiDt}, ''), NULLIF(#{item.stDt}, ''), NULLIF(#{item.endDt}, ''),
+            #{item.useYn},
+            'Y', 0,
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           사용자를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateUser">
+        /* UserAuthMapper.updateUser 사용자를 수정 */
+        UPDATE TB_USR_M
+           SET USR_NM        = #{item.usrNm},
+               EMP_NO        = NULLIF(#{item.empNo}, ''),
+               DEPT_CD       = NULLIF(#{item.deptCd}, ''),
+               EML_ADDR      = NULLIF(#{item.emlAddr}, ''),
+               MOBL_NO       = NULLIF(#{item.moblNo}, ''),
+               USR_STAT_CD   = NULLIF(#{item.usrStatCd}, ''),
+               USR_LOCK_DTTM = CASE WHEN COALESCE(NULLIF(#{item.usrLockYn}, ''), 'N') = 'Y' AND COALESCE(USR_LOCK_YN, 'N') = 'N'
+                                    THEN CURRENT_TIMESTAMP
+                                    WHEN COALESCE(NULLIF(#{item.usrLockYn}, ''), 'N') = 'N' THEN NULL
+                                    ELSE USR_LOCK_DTTM END,
+               LGIN_ERR_CNT  = CASE WHEN COALESCE(NULLIF(#{item.usrLockYn}, ''), 'N') = 'N' AND COALESCE(USR_LOCK_YN, 'N') = 'Y'
+                                    THEN 0 ELSE LGIN_ERR_CNT END,
+               USR_LOCK_YN   = COALESCE(NULLIF(#{item.usrLockYn}, ''), 'N'),
+               USR_CLS_CD    = NULLIF(#{item.usrClsCd}, ''),
+               ECOM_DT       = NULLIF(#{item.ecomDt}, ''),
+               RESI_DT       = NULLIF(#{item.resiDt}, ''),
+               USE_ST_DT     = NULLIF(#{item.stDt}, ''),
+               USE_END_DT    = NULLIF(#{item.endDt}, ''),
+               USE_YN        = #{item.useYn},
+               FINA_REGR_ID  = #{regrId},
+               FINA_REG_DT   = CURRENT_TIMESTAMP
+         WHERE USR_ID = #{item.usrId}
+    </update>
+
+    <!--
+           사용자를 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteUser">
+        /* UserAuthMapper.deleteUser 사용자를 삭제 */
+        DELETE FROM TB_USR_M
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+    <!--
+           사용자의 권한그룹 매핑을 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserAuthGroupList">
+        /* UserAuthMapper.deleteUserAuthGroupList 사용자의 권한그룹 매핑을 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_USR_AUTH_GRP_R
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+    <!--
+           사용자의 즐겨찾기를 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserFavoriteList">
+        /* UserAuthMapper.deleteUserFavoriteList 사용자의 즐겨찾기를 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_PRGM_FAV_L
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+    <!--
+           사용자 비밀번호를 초기 비밀번호로 초기화 (최초로그인여부 Y, 로그인오류건수 0, 잠금 해제)
+           작성자 : ywkim
+      -->
+    <update id="updateUserPasswordReset">
+        /* UserAuthMapper.updateUserPasswordReset 사용자 비밀번호를 초기 비밀번호로 초기화 (최초로그인여부 Y, 로그인오류건수 0, 잠금 해제) */
+        UPDATE TB_USR_M
+           SET PWD           = #{pwd},
+               PWD_CHG_DTTM  = NULL,
+               FIRS_LGIN_YN  = 'Y',
+               LGIN_ERR_CNT  = 0,
+               USR_LOCK_YN   = 'N',
+               USR_LOCK_DTTM = NULL,
+               FINA_REGR_ID  = #{regrId},
+               FINA_REG_DT   = CURRENT_TIMESTAMP
+         WHERE USR_ID = #{usrId}
+    </update>
+
+    <!--
+           사용자의 화면 권한 목록을 메뉴ID 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectUserMenuAuthList" resultType="kr.or.coder.biz.system.auths.dto.UserMenuAuthResponse">
+        /* UserAuthMapper.selectUserMenuAuthList 사용자의 화면 권한 목록을 메뉴ID 순으로 조회 */
+        SELECT USR_ID, MENU_ID, PRGM_ID
+        FROM TB_USR_MENU_R
+        WHERE USR_ID = #{usrId}
+        ORDER BY MENU_ID, PRGM_ID
+    </select>
+
+
+    <!--
+           사용자 화면 권한을 등록 (이미 있으면 건너뜀)
+           작성자 : ywkim
+      -->
+    <insert id="insertUserMenuAuth">
+        /* UserAuthMapper.insertUserMenuAuth 사용자 화면 권한을 등록 (이미 있으면 건너뜀) */
+        INSERT INTO TB_USR_MENU_R (
+            USR_ID, MENU_ID, PRGM_ID,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrId}, #{item.menuId}, #{item.prgmId},
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (USR_ID, MENU_ID, PRGM_ID) DO NOTHING
+    </insert>
+
+    <!--
+           사용자 화면 권한을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserMenuAuth">
+        /* UserAuthMapper.deleteUserMenuAuth 사용자 화면 권한을 삭제 */
+        DELETE FROM TB_USR_MENU_R
+         WHERE USR_ID  = #{usrId}
+           AND MENU_ID = #{menuId}
+           AND PRGM_ID = #{prgmId}
+    </delete>
+
+    <!--
+           사용자의 화면 권한을 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserMenuAuthList">
+        /* UserAuthMapper.deleteUserMenuAuthList 사용자의 화면 권한을 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_USR_MENU_R
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+    <!--
+           사용자의 컴포넌트 권한을 조회 (프로그램ID가 없으면 전체)
+           작성자 : ywkim
+      -->
+    <select id="selectUserComponentAuthList" resultType="kr.or.coder.biz.system.auths.dto.UserComponentAuthResponse">
+        /* UserAuthMapper.selectUserComponentAuthList 사용자의 컴포넌트 권한을 조회 (프로그램ID가 없으면 전체) */
+        SELECT USR_ID, PRGM_ID, CMPN_ID, AUTH_YN
+        FROM TB_USR_CMPN_R
+        WHERE USR_ID = #{usrId}
+        <if test="prgmId != null">
+          AND PRGM_ID = #{prgmId}
+        </if>
+        ORDER BY PRGM_ID, CMPN_ID
+    </select>
+
+
+    <!--
+           사용자 컴포넌트 권한을 등록 (이미 있으면 권한여부 수정)
+           작성자 : ywkim
+      -->
+    <insert id="insertUserComponentAuth">
+        /* UserAuthMapper.insertUserComponentAuth 사용자 컴포넌트 권한을 등록 (이미 있으면 권한여부 수정) */
+        INSERT INTO TB_USR_CMPN_R (
+            USR_ID, PRGM_ID, CMPN_ID, AUTH_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.usrId}, #{item.prgmId}, #{item.cmpnId}, #{item.authYn},
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (USR_ID, PRGM_ID, CMPN_ID) DO UPDATE
+           SET AUTH_YN      = EXCLUDED.AUTH_YN,
+               FINA_REGR_ID = EXCLUDED.FINA_REGR_ID,
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+    </insert>
+
+
+    <!--
+           사용자의 컴포넌트 권한을 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserComponentAuthList">
+        /* UserAuthMapper.deleteUserComponentAuthList 사용자의 컴포넌트 권한을 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_USR_CMPN_R
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+    <!--
+           화면 권한이 남아 있지 않은 프로그램의 컴포넌트 권한을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserComponentAuthWithoutMenu">
+        /* UserAuthMapper.deleteUserComponentAuthWithoutMenu 화면 권한이 남아 있지 않은 프로그램의 컴포넌트 권한을 삭제 */
+        DELETE FROM TB_USR_CMPN_R C
+         WHERE C.USR_ID = #{usrId}
+           AND NOT EXISTS (
+                SELECT 1 FROM TB_USR_MENU_R M
+                 WHERE M.USR_ID  = C.USR_ID
+                   AND M.PRGM_ID = C.PRGM_ID
+           )
+    </delete>
+
+    <!--
+           사용자가 받은 알람을 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserAlarmList">
+        /* UserAuthMapper.deleteUserAlarmList 사용자가 받은 알람을 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_ALRM_L
+         WHERE RCVR_ID = #{usrId}
+    </delete>
+
+    <!--
+           사용자를 배치 알람수신자에서 모두 삭제 (사용자 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteUserBatchAlarmReceiverList">
+        /* UserAuthMapper.deleteUserBatchAlarmReceiverList 사용자를 배치 알람수신자에서 모두 삭제 (사용자 삭제 시) */
+        DELETE FROM TB_DSPT_ALRM_RCVR_R
+         WHERE USR_ID = #{usrId}
+    </delete>
+
+</mapper>

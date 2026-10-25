@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "coder-frontend"
+		},
+		{
+			"path": "coder-backend"
+		},
+		{
+			"path": "coder-batch"
+		},
+		{
+			"path": "coder-core"
+		}
+	],
+	"settings": {}
+}

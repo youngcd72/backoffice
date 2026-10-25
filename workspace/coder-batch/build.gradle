@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'kr.or.coder.batch'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
+    }
+    dependencies {
+        dependency 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+        dependency 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    }
+}
+
+dependencies {
+    // CODER Core Base Libraries (Included from ../coder-core via Composite Build)
+    implementation 'kr.or.coder.core:coder-core-common'
+    implementation 'kr.or.coder.core:coder-core-db'
+    implementation 'kr.or.coder.core:coder-core-security'
+
+    // Spring Batch + Quartz
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+    // 배치 실패 알람 실시간 전송 (Redis 채널 coder:sse 발행 → coder-backend SSE)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Spring Boot Actuator for health check & metrics
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Database Drivers
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+}
+
+bootRun {
+    jvmArgs = ['-Duser.timezone=Asia/Seoul', '-Dfile.encoding=UTF-8']
+}
+
+// 단위 테스트: DB 없이 실행 가능한 테스트만 수행
+tasks.named('test') {
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+// 통합 테스트: PostgreSQL 필요
+//  - BatchFlowIntegrationTest: 임시 스키마에 테이블을 새로 만들고 종료 시 삭제
+//  - 그 외: 로컬 DB(BATCH_*, QRTZ_*, TB_DSPT_* 테이블 생성 완료) 사용
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests that require a PostgreSQL database.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    shouldRunAfter tasks.named('test')
+}

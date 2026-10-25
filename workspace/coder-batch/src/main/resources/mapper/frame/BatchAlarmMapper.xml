@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : BatchAlarmMapper.xml
+    Description   : 배치 실패 알람 Mapper (TB_DSPT_ALRM_RCVR_R 수신자 조회, TB_ALRM_L 알람 등록)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.batch.frame.mapper.BatchAlarmMapper">
+
+    <!--
+           배치직무에 등록된 알람 수신자 중 사용 중인 사용자ID 목록을 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectBatchAlarmRcvrIdList" resultType="string">
+        /* BatchAlarmMapper.selectBatchAlarmRcvrIdList 배치직무에 등록된 알람 수신자 중 사용 중인 사용자ID 목록을 조회한다. */
+        SELECT R.USR_ID
+        FROM TB_DSPT_ALRM_RCVR_R R
+        JOIN TB_USR_M U
+          ON U.USR_ID = R.USR_ID
+        WHERE R.JOB_ID = #{jobId}
+          AND U.USE_YN = 'Y'
+        ORDER BY R.USR_ID
+    </select>
+
+    <!--
+           알람일련번호를 채번한다.
+           작성자 : ywkim
+      -->
+    <select id="selectNextAlarmSn" resultType="long">
+        /* BatchAlarmMapper.selectNextAlarmSn 알람일련번호를 채번한다. */
+        SELECT NEXTVAL('SQ_TB_ALRM_L_ALRM_SN')
+    </select>
+
+    <!--
+           알람을 등록한다.
+           (일련번호는 selectNextAlarmSn 으로 미리 채번. 전역 use-generated-keys 를 쓰면 드라이버가 RETURNING * 를 붙여
+            SELECT 권한이 필요하므로 끈다 - BATCH 계정은 TB_ALRM_L 에 INSERT 권한만 있다)
+           작성자 : ywkim
+      -->
+    <insert id="insertAlarm" useGeneratedKeys="false">
+        /* BatchAlarmMapper.insertAlarm 알람을 등록한다. */
+        INSERT INTO TB_ALRM_L (
+            ALRM_SN, RCVR_ID, ALRM_TYPE_CD, ALRM_TITL_NM, ALRM_CONT, PRGM_ID, CFM_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{alrmSn}, #{rcvrId}, #{alrmTypeCd}, #{alrmTitlNm}, #{alrmCont}, #{prgmId}, 'N',
+            #{regrId}, #{regDt}, #{regrId}, #{regDt}
+        )
+    </insert>
+
+    <!--
+           배치직무에 등록된 알람 수신자 목록을 사용자명과 함께 조회한다 (배치관리 화면 표시용, 미사용 사용자 포함).
+           작성자 : ywkim
+      -->
+    <select id="selectBatchAlarmRcvrList" resultType="kr.or.coder.batch.frame.dto.BatchAlarmRcvrResponse">
+        /* BatchAlarmMapper.selectBatchAlarmRcvrList 배치직무에 등록된 알람 수신자 목록을 사용자명과 함께 조회한다 (배치관리 화면 표시용, 미사용 사용자 포함). */
+        SELECT R.USR_ID,
+               U.USR_NM,
+               U.USE_YN
+        FROM TB_DSPT_ALRM_RCVR_R R
+        JOIN TB_USR_M U
+          ON U.USR_ID = R.USR_ID
+        WHERE R.JOB_ID = #{jobId}
+        ORDER BY R.USR_ID
+    </select>
+
+    <!--
+           사용자 테이블에 있는 사용자ID만 조회한다 (알람 수신자 검증).
+           작성자 : ywkim
+      -->
+    <select id="selectExistingUsrIdList" resultType="string">
+        /* BatchAlarmMapper.selectExistingUsrIdList 사용자 테이블에 있는 사용자ID만 조회한다 (알람 수신자 검증). */
+        SELECT USR_ID
+        FROM TB_USR_M
+        WHERE USR_ID IN
+        <foreach collection="usrIdList" item="usrId" open="(" separator="," close=")">
+            #{usrId}
+        </foreach>
+    </select>
+
+    <!--
+           배치직무의 알람 수신자를 등록한다.
+           작성자 : ywkim
+      -->
+    <insert id="insertBatchAlarmRcvr" useGeneratedKeys="false">
+        /* BatchAlarmMapper.insertBatchAlarmRcvr 배치직무의 알람 수신자를 등록한다. */
+        INSERT INTO TB_DSPT_ALRM_RCVR_R (
+            JOB_ID, USR_ID,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{jobId}, #{usrId},
+            #{regrId}, CURRENT_TIMESTAMP, #{regrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           배치직무의 알람 수신자를 모두 삭제한다 (배치직무 삭제, 수신자 저장 시 전체 교체).
+           작성자 : ywkim
+      -->
+    <delete id="deleteBatchAlarmRcvrByJobId">
+        /* BatchAlarmMapper.deleteBatchAlarmRcvrByJobId 배치직무의 알람 수신자를 모두 삭제한다 (배치직무 삭제, 수신자 저장 시 전체 교체). */
+        DELETE FROM TB_DSPT_ALRM_RCVR_R
+        WHERE JOB_ID = #{jobId}
+    </delete>
+
+</mapper>

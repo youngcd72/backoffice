@@ -1,0 +1,26 @@
+-- PostgreSQL / CLAUDE.md 5.x 표준 적용 (COMP_CD 제외)
+-- ---------------------------------------------------------------------
+-- TB_DSPT_ALRM_RCVR_R : 배치알람수신자관계 (coder-batch)
+--   배치직무별 알람 수신자. 배치 실행이 실패(FAILED)하면 등록된 사용자에게 알람(TB_ALRM_L)을 보낸다.
+-- ---------------------------------------------------------------------
+CREATE TABLE TB_DSPT_ALRM_RCVR_R (
+    JOB_ID                VARCHAR(100)  NOT NULL,
+    USR_ID                VARCHAR(10)   NOT NULL,
+    FIRS_REGR_ID          VARCHAR(10)   NOT NULL,
+    FIRS_REG_DT           TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FINA_REGR_ID          VARCHAR(10)   NOT NULL,
+    FINA_REG_DT           TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT TB_DSPT_ALRM_RCVR_R_PK PRIMARY KEY (JOB_ID, USR_ID),
+    CONSTRAINT TB_DSPT_ALRM_RCVR_R_FK01 FOREIGN KEY (JOB_ID) REFERENCES TB_DSPT_JOB_M (JOB_ID),
+    CONSTRAINT TB_DSPT_ALRM_RCVR_R_FK02 FOREIGN KEY (USR_ID) REFERENCES TB_USR_M (USR_ID)
+);
+
+CREATE INDEX TB_DSPT_ALRM_RCVR_R_IX01 ON TB_DSPT_ALRM_RCVR_R (USR_ID);
+
+COMMENT ON TABLE  TB_DSPT_ALRM_RCVR_R IS '배치알람수신자관계';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.JOB_ID                 IS '직무ID (배치ID, TB_DSPT_JOB_M.JOB_ID)';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.USR_ID                 IS '사용자ID (알람 수신자, TB_USR_M.USR_ID)';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.FIRS_REGR_ID           IS '최초등록자ID';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.FIRS_REG_DT            IS '최초등록일시';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.FINA_REGR_ID           IS '최종등록자ID';
+COMMENT ON COLUMN TB_DSPT_ALRM_RCVR_R.FINA_REG_DT            IS '최종등록일시';

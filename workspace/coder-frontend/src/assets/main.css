@@ -1,0 +1,358 @@
+/*
+ * CODER 디자인 시스템 v2
+ * 공항·보세 사인 체계: 파인 그린(브랜드) + 사인 옐로(주의·선택·포커스) + 스탬프 레드(폐기·오류)
+ *
+ * 규칙
+ * - 새 코드는 --ds-* 토큰만 쓴다. 하드코딩 색상 금지.
+ * - 사인 옐로는 면(배경)으로 거의 쓰지 않는다: 활성 행 바·활성 탭/메뉴 표시선·포커스 링·화면ID 글자·1회성 경고에만.
+ * - 흰 바탕 위 '주의' 글자는 --ds-ochre (옐로 글자는 대비 부족).
+ * - 그림자는 오버레이(팝업·드롭다운)에만. 그라데이션·글로우·hover 떠오름 없음.
+ * - 모서리: 컨트롤 3px · 패널 4px · 오버레이 6px.
+ * - 서체: IBM Plex Sans KR 하나. 코드값(키ID·기관ID·감사ID)만 IBM Plex Mono. 숫자 열은 tabular-nums.
+ */
+:root {
+  /* ---------- 브랜드 ---------- */
+  --ds-pine-900: #0f3a30;
+  --ds-pine-700: #14463a;
+  --ds-pine-500: #2f6b5b;
+  --ds-pine-100: #e3ece8;
+  --ds-pine-050: #f3f7f5;
+
+  /* ---------- 신호 ---------- */
+  --ds-sign: #f5c400;
+  --ds-sign-tint: #fff7d1;
+  --ds-ochre: #8a5d00;
+  --ds-stamp: #b8321f;
+  --ds-stamp-hover: #96281a;
+  --ds-stamp-tint: #fbebe7;
+
+  /* ---------- 바탕 · 잉크 · 괘선 ---------- */
+  --ds-ground: #edf1f0;
+  --ds-surface: #ffffff;
+  --ds-surface-muted: #eef1f0;
+  --ds-ink: #17201d;
+  --ds-ink-2: #4a5652;
+  --ds-ink-3: #77827e;
+  --ds-ink-inverse: #ffffff;
+  --ds-rule: #dde3e0;
+  --ds-rule-strong: #b3bfba;
+  --ds-scrim: rgba(15, 32, 27, 0.42);
+
+  /* ---------- 형태 ---------- */
+  --ds-radius-control: 3px;
+  --ds-radius-panel: 4px;
+  --ds-radius-overlay: 6px;
+  --ds-shadow-overlay: 0 14px 36px rgba(15, 58, 48, 0.28);
+  --ds-focus: 0 0 0 2px var(--ds-surface), 0 0 0 4px var(--ds-pine-900), 0 0 0 6px var(--ds-sign);
+  --ds-focus-field: 0 0 0 3px var(--ds-pine-100);
+  --ds-control-height: 34px;
+  --ds-control-height-sm: 30px;
+  --ds-ease: 0.12s ease;
+
+  /* ---------- 서체 ---------- */
+  --ds-font: 'IBM Plex Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+  --ds-font-code: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+
+  /* ---------- 레이아웃 ---------- */
+  --header-height: 64px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+
+  /* ---------- 기존 토큰 (호환용 별칭 — 새 코드에서 쓰지 말 것) ---------- */
+  --font-sans: var(--ds-font);
+  --font-mono: var(--ds-font-code);
+  --brand-green-darker: var(--ds-pine-900);
+  --brand-green-dark: var(--ds-pine-900);
+  --brand-green: var(--ds-pine-700);
+  --brand-green-light: var(--ds-pine-500);
+  --mint-bg: var(--ds-pine-100);
+  --mint-border: var(--ds-rule-strong);
+  --bg-app: var(--ds-ground);
+  --bg-sidebar: var(--ds-surface);
+  --bg-header: var(--ds-pine-900);
+  --bg-card: var(--ds-surface);
+  --bg-card-hover: var(--ds-pine-050);
+  --bg-card-solid: var(--ds-surface);
+  --bg-input: var(--ds-surface);
+  --bg-hover: var(--ds-pine-050);
+  --border-color: var(--ds-rule-strong);
+  --border-focus: var(--ds-pine-700);
+  --border-card: var(--ds-rule);
+  --text-primary: var(--ds-ink);
+  --text-secondary: var(--ds-ink-2);
+  --text-muted: var(--ds-ink-3);
+  --text-inverse: var(--ds-ink-inverse);
+  --primary: var(--ds-pine-700);
+  --primary-hover: var(--ds-pine-900);
+  --primary-glow: var(--ds-pine-100);
+  --accent-cyan: var(--ds-pine-500);
+  --accent-cyan-glow: var(--ds-pine-100);
+  --accent-emerald: var(--ds-pine-700);
+  --accent-emerald-glow: var(--ds-pine-100);
+  --accent-amber: var(--ds-ochre);
+  --accent-rose: var(--ds-stamp);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: var(--ds-shadow-overlay);
+  --shadow-glow: none;
+  --blur-backdrop: none;
+  --radius-sm: var(--ds-radius-control);
+  --radius-md: var(--ds-radius-panel);
+  --radius-lg: var(--ds-radius-panel);
+  --radius-xl: var(--ds-radius-overlay);
+  --radius-full: 9999px;
+  --transition-fast: var(--ds-ease);
+  --transition-normal: var(--ds-ease);
+}
+
+/* ---------- 기본 ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--ds-font);
+  font-size: 14px;
+  background-color: var(--ds-ground);
+  color: var(--ds-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus);
+}
+
+::selection {
+  background: var(--ds-sign-tint);
+  color: var(--ds-ink);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ds-rule-strong);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--ds-ink-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* ---------- 유틸리티 (공통 컴포넌트를 쓰지 않는 화면용) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--ds-control-height);
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-control);
+  transition: background-color var(--ds-ease), border-color var(--ds-ease), color var(--ds-ease);
+}
+
+.btn-primary {
+  background: var(--ds-pine-700);
+  border-color: var(--ds-pine-700);
+  color: var(--ds-ink-inverse);
+}
+.btn-primary:hover {
+  background: var(--ds-pine-900);
+  border-color: var(--ds-pine-900);
+}
+
+.btn-secondary {
+  background: var(--ds-surface);
+  border-color: var(--ds-rule-strong);
+  color: var(--ds-ink);
+}
+.btn-secondary:hover {
+  background: var(--ds-pine-050);
+  border-color: var(--ds-pine-700);
+  color: var(--ds-pine-900);
+}
+
+.btn-danger {
+  background: var(--ds-stamp);
+  border-color: var(--ds-stamp);
+  color: var(--ds-ink-inverse);
+}
+.btn-danger:hover {
+  background: var(--ds-stamp-hover);
+}
+
+.btn-icon {
+  width: var(--ds-control-height);
+  height: var(--ds-control-height);
+  padding: 0;
+  border-radius: var(--ds-radius-control);
+  color: var(--ds-ink-2);
+  background: transparent;
+  transition: background-color var(--ds-ease), color var(--ds-ease);
+}
+.btn-icon:hover {
+  color: var(--ds-ink);
+  background: var(--ds-pine-050);
+}
+
+/* 패널: 괘선 한 줄, 그림자 없음 */
+.card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-rule);
+  border-radius: var(--ds-radius-panel);
+  padding: 20px;
+}
+
+/* 상태 배지: 통관 도장처럼 테두리 + 옅은 바탕 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+}
+.badge-success { color: var(--ds-pine-700); background: var(--ds-pine-100); }
+.badge-info    { color: var(--ds-pine-500); background: var(--ds-pine-050); }
+.badge-warning { color: var(--ds-ochre);    background: var(--ds-sign-tint); }
+.badge-danger  { color: var(--ds-stamp);    background: var(--ds-stamp-tint); }
+
+.input-control {
+  width: 100%;
+  height: var(--ds-control-height);
+  padding: 0 10px;
+  font-size: 14px;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-rule-strong);
+  border-radius: var(--ds-radius-control);
+  color: var(--ds-ink);
+  outline: none;
+  transition: border-color var(--ds-ease), box-shadow var(--ds-ease);
+}
+.input-control:focus {
+  border-color: var(--ds-pine-700);
+  box-shadow: var(--ds-focus-field);
+}
+
+/* ---------- 조회영역 라벨-입력 간격 (기본) ----------
+   라벨 너비를 고정(min-width)하지 않고, 라벨 글자 바로 뒤에 같은 간격으로 입력 컴포넌트를 둔다.
+   화면 scoped 스타일의 .field-label 보다 우선하도록 .search-area 를 붙인다. */
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-area .search-field > .field-label {
+  flex: none;
+  min-width: 0;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ds-ink-2);
+}
+
+/* 화면ID 플레이트: 운영자가 화면을 부르는 이름(SYLK050)을 게이트 표지처럼 세운다 */
+.page-plate {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  height: 28px;
+  padding: 0 10px;
+  font-family: var(--ds-font);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ds-sign);
+  background: var(--ds-pine-900);
+  border-radius: 2px;
+}
+
+.mono {
+  font-family: var(--ds-font-code);
+  font-size: 12.5px;
+}
+
+/* ---------- 그리드 배치 ---------- */
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  gap: 16px;
+}
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ---------- 상태 점 (정적 — 깜빡임은 상태가 바뀔 때만 의미가 있다) ---------- */
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.pulse-dot.online  { background-color: var(--ds-pine-500); }
+.pulse-dot.warning { background-color: var(--ds-sign); box-shadow: 0 0 0 1px var(--ds-ochre); }
+.pulse-dot.offline { background-color: var(--ds-stamp); }

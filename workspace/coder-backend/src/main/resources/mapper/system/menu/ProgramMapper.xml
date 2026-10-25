@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : ProgramMapper.xml
+    Description   : SYPG010 프로그램관리 MyBatis Mapper (TB_PRGM_M)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.17  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.menu.mapper.ProgramMapper">
+
+    <!--
+           조회 조건에 맞는 프로그램 목록을 정렬순번 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectProgramList" resultType="kr.or.coder.biz.system.menu.dto.ProgramResponse">
+        /* ProgramMapper.selectProgramList 조회 조건에 맞는 프로그램 목록을 정렬순번 순으로 조회 */
+        SELECT PRGM_ID,
+               COALESCE(PRGM_NM, '')     AS PRGM_NM,
+               COALESCE(LNK_URL, '')     AS LNK_URL,
+               COALESCE(PRGM_CRS_CD, '') AS PRGM_CRS_CD,
+               USE_YN,
+               COALESCE(ST_DT, '')       AS ST_DT,
+               COALESCE(END_DT, '')      AS END_DT,
+               COALESCE(RMK, '')         AS RMK
+        FROM TB_PRGM_M
+        <where>
+            <if test="prgmCrsCd != null and prgmCrsCd != ''">
+                AND PRGM_CRS_CD = #{prgmCrsCd}
+            </if>
+            <if test="prgmId != null and prgmId.trim() != ''">
+                AND UPPER(PRGM_ID) LIKE '%' || UPPER(TRIM(#{prgmId})) || '%'
+            </if>
+            <if test="prgmNm != null and prgmNm.trim() != ''">
+                AND UPPER(PRGM_NM) LIKE '%' || UPPER(TRIM(#{prgmNm})) || '%'
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND USE_YN = #{useYn}
+            </if>
+        </where>
+        ORDER BY ALIN_SEQ NULLS LAST, PRGM_ID
+    </select>
+
+    <!--
+           프로그램의 컴포넌트 목록을 정렬순번 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectProgramComponentList" resultType="kr.or.coder.biz.system.menu.dto.ProgramComponentResponse">
+        /* ProgramMapper.selectProgramComponentList 프로그램의 컴포넌트 목록을 정렬순번 순으로 조회 */
+        SELECT PRGM_ID,
+               CMPN_ID,
+               COALESCE(CMPN_NM, '') AS CMPN_NM,
+               ALIN_SEQ,
+               USE_YN
+        FROM TB_PRGM_CMPN_M
+        WHERE PRGM_ID = #{prgmId}
+        ORDER BY ALIN_SEQ NULLS LAST, CMPN_ID
+    </select>
+
+    <!--
+           프로그램ID가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsProgram" resultType="boolean">
+        /* ProgramMapper.existsProgram 프로그램ID가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_PRGM_M WHERE PRGM_ID = #{prgmId})
+    </select>
+
+    <!--
+           프로그램을 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertProgram">
+        /* ProgramMapper.insertProgram 프로그램을 등록 */
+        INSERT INTO TB_PRGM_M (
+            PRGM_ID, PRGM_NM, LNK_URL, PRGM_CRS_CD, USE_YN, ST_DT, END_DT, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.prgmId}, #{item.prgmNm}, NULLIF(#{item.lnkUrl}, ''), NULLIF(#{item.prgmCrsCd}, ''),
+            #{item.useYn}, NULLIF(#{item.stDt}, ''), NULLIF(#{item.endDt}, ''), NULLIF(#{item.rmk}, ''),
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           프로그램을 수정 (정렬순번은 변경하지 않음)
+           작성자 : ywkim
+      -->
+    <update id="updateProgram">
+        /* ProgramMapper.updateProgram 프로그램을 수정 (정렬순번은 변경하지 않음) */
+        UPDATE TB_PRGM_M
+           SET PRGM_NM      = #{item.prgmNm},
+               LNK_URL      = NULLIF(#{item.lnkUrl}, ''),
+               PRGM_CRS_CD  = NULLIF(#{item.prgmCrsCd}, ''),
+               USE_YN       = #{item.useYn},
+               ST_DT        = NULLIF(#{item.stDt}, ''),
+               END_DT       = NULLIF(#{item.endDt}, ''),
+               RMK          = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID = #{usrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE PRGM_ID = #{item.prgmId}
+    </update>
+
+    <!--
+           프로그램을 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteProgram">
+        /* ProgramMapper.deleteProgram 프로그램을 삭제 */
+        DELETE FROM TB_PRGM_M
+         WHERE PRGM_ID = #{prgmId}
+    </delete>
+
+    <!--
+           프로그램 컴포넌트가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsProgramComponent" resultType="boolean">
+        /* ProgramMapper.existsProgramComponent 프로그램 컴포넌트가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_PRGM_CMPN_M WHERE PRGM_ID = #{prgmId} AND CMPN_ID = #{cmpnId})
+    </select>
+
+    <!--
+           프로그램 컴포넌트를 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertProgramComponent">
+        /* ProgramMapper.insertProgramComponent 프로그램 컴포넌트를 등록 */
+        INSERT INTO TB_PRGM_CMPN_M (
+            PRGM_ID, CMPN_ID, CMPN_NM, ALIN_SEQ, USE_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.prgmId}, #{item.cmpnId}, #{item.cmpnNm}, #{item.alinSeq}, #{item.useYn},
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           프로그램 컴포넌트를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateProgramComponent">
+        /* ProgramMapper.updateProgramComponent 프로그램 컴포넌트를 수정 */
+        UPDATE TB_PRGM_CMPN_M
+           SET CMPN_NM      = #{item.cmpnNm},
+               ALIN_SEQ     = #{item.alinSeq},
+               USE_YN       = #{item.useYn},
+               FINA_REGR_ID = #{usrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE PRGM_ID = #{item.prgmId}
+           AND CMPN_ID = #{item.cmpnId}
+    </update>
+
+    <!--
+           프로그램 컴포넌트를 삭제
+           작성자 : ywkim
+      -->
+    <delete id="deleteProgramComponent">
+        /* ProgramMapper.deleteProgramComponent 프로그램 컴포넌트를 삭제 */
+        DELETE FROM TB_PRGM_CMPN_M
+         WHERE PRGM_ID = #{prgmId}
+           AND CMPN_ID = #{cmpnId}
+    </delete>
+
+    <!--
+           프로그램의 컴포넌트를 모두 삭제 (프로그램 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteProgramComponentList">
+        /* ProgramMapper.deleteProgramComponentList 프로그램의 컴포넌트를 모두 삭제 (프로그램 삭제 시) */
+        DELETE FROM TB_PRGM_CMPN_M
+         WHERE PRGM_ID = #{prgmId}
+    </delete>
+
+    <!--
+           프로그램을 사용하는 메뉴가 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsProgramMenu" resultType="boolean">
+        /* ProgramMapper.existsProgramMenu 프로그램을 사용하는 메뉴가 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_MENU_M WHERE PRGM_ID = #{prgmId})
+    </select>
+
+    <!--
+           프로그램 컴포넌트의 권한그룹 컴포넌트 권한을 삭제 (프로그램·컴포넌트 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteProgramAuthGroupComponentList">
+        /* ProgramMapper.deleteProgramAuthGroupComponentList 프로그램 컴포넌트의 권한그룹 컴포넌트 권한을 삭제 (프로그램·컴포넌트 삭제 시) */
+        DELETE FROM TB_AUTH_GRP_CMPN_R
+         WHERE PRGM_ID = #{prgmId}
+        <if test="cmpnId != null">
+           AND CMPN_ID = #{cmpnId}
+        </if>
+    </delete>
+
+    <!--
+           프로그램 컴포넌트의 사용자 컴포넌트 권한을 삭제 (프로그램·컴포넌트 삭제 시)
+           작성자 : ywkim
+      -->
+    <delete id="deleteProgramUserComponentList">
+        /* ProgramMapper.deleteProgramUserComponentList 프로그램 컴포넌트의 사용자 컴포넌트 권한을 삭제 (프로그램·컴포넌트 삭제 시) */
+        DELETE FROM TB_USR_CMPN_R
+         WHERE PRGM_ID = #{prgmId}
+        <if test="cmpnId != null">
+           AND CMPN_ID = #{cmpnId}
+        </if>
+    </delete>
+
+</mapper>

@@ -1,0 +1,124 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: coder-backend
+
+  # -------------------------------------------------------------------
+  # Database Configuration (PostgreSQL)
+  # -------------------------------------------------------------------
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      jdbc-url: jdbc:postgresql://localhost:5432/coder?currentSchema=coder
+      username: coder
+      password: ${CODER_DB_PASSWORD:coder1234!}
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 30000
+
+# -------------------------------------------------------------------
+# CODER Framework Configurations
+# -------------------------------------------------------------------
+coder:
+  # 로그 (logback-spring.xml) - 에러 로그(JSON)의 시스템유형 (SY003: 01 ERP)
+  log:
+    sysm-cls-cd: "01"
+
+  # Database & MyBatis Configuration (coder-core-db)
+  database:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/coder?currentSchema=coder
+    username: coder
+    password: ${CODER_DB_PASSWORD:coder1234!}
+
+  mybatis:
+    mapper-locations: classpath*:mapper/**/*.xml
+    type-aliases-package: kr.or.coder.common.frame.dto,kr.or.coder.core.db.model
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    use-generated-keys: true
+    default-statement-timeout: 30
+
+  # Redis Configuration (coder-core-redis)
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 3000
+    session:
+      enabled: false
+
+  # Security Configuration (coder-core-security)
+  security:
+    enabled: true
+    csrf-enabled: false
+    cors-enabled: true
+    jwt:
+      # 서명 비밀키: 운영은 CODER_JWT_SECRET 필수 (application-prod.yml), 기본값은 로컬 개발용. coder-batch 와 같은 값이어야 한다
+      secret: ${CODER_JWT_SECRET:coder-enterprise-super-secure-jwt-signing-key-256bit-secret-value!}
+      access-token-expiration: 86400
+      issuer: "coder-auth"
+    permit-urls:
+      - "/"
+      - "/api/ping"
+      - "/api/v1/auth/login"
+      - "/api/v1/messages"
+      - "/swagger-ui.html"
+      - "/swagger-ui/**"
+      - "/v3/api-docs/**"
+      - "/swagger-resources/**"
+      - "/actuator/**"
+      - "/error"
+
+  # 로그인·권한 (kr.or.coder.common.auth.AuthProperties)
+  auth:
+    init-password: ${CODER_INIT_PASSWORD:coder1234}   # 사용자 등록·비밀번호 초기화 시 초기 비밀번호 (운영은 CODER_INIT_PASSWORD 필수)
+    max-login-fail-count: 5                           # 비밀번호를 연속으로 틀리면 계정을 잠그는 횟수
+    admin-group-codes:                                # 관리자(role ADMIN) 권한그룹: 배치 관리 API·알람 발송 허용
+      - GRP_IT
+
+  # 시스템로그관리(SYLO030) 조회 한도 - 화면의 "(최근 N건 표시)" 안내(MAX_ROWS)와 같은 값으로 둔다
+  system-log:
+    max-period-days: 31   # 최대 조회 기간 (일)
+    max-rows: 1000        # 최대 반환 건수 (최근 순)
+
+  # 알림 센터 목록 최대 조회 건수
+  alarm:
+    max-rows: 50
+
+  # SSE (상단 알림 센터 /api/v1/alarms/stream)
+  #   heartbeat 간격은 프록시·로드밸런서 유휴 타임아웃(nginx proxy_read_timeout 기본 60s)보다 짧게 둔다
+  sse:
+    timeout-ms: 1800000            # 연결 유지 30분, 지나면 화면이 다시 연결
+    heartbeat-interval-ms: 25000
+    max-emitters-per-user: 10      # 사용자당 최대 연결(탭) 수
+
+  # Message / i18n Configuration (coder-core-common)
+  message:
+    basename: messages/messages
+    encoding: UTF-8
+    default-locale: ko
+    cache-seconds: 3600
+
+  # Swagger & OpenAPI Documentation (coder-core-security)
+  swagger:
+    enabled: true
+    title: CODER Backend API
+    description: Backend REST API Service powering the CODER Frontend Management Console
+    version: v1.0.0
+    oauth2:
+      enabled: false
+
+# -------------------------------------------------------------------
+# Spring Boot Actuator Management
+# -------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

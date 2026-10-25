@@ -1,0 +1,9 @@
+{
+  "name": "coder",
+  "private": true,
+  "scripts": {
+    "dev:coder-frontend": "pnpm --dir workspace/coder-frontend dev",
+    "dev:coder-backend": "cd workspace/coder-backend && .\\gradlew.bat bootRun",
+    "dev:coder-batch": "cd workspace/coder-batch && .\\gradlew.bat bootRun"
+  }
+}

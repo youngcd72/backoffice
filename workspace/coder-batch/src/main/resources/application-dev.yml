@@ -1,0 +1,14 @@
+# -------------------------------------------------------------------
+# dev - 개발 서버
+#   접속 정보는 환경변수로 주입한다 (기본값은 개발 DB 기준).
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      jdbc-url: ${CODER_BATCH_DB_URL:jdbc:postgresql://localhost:5432/coder?currentSchema=batch,coder}
+      username: ${CODER_BATCH_DB_USERNAME:batch}
+      password: ${CODER_BATCH_DB_PASSWORD:batch1234!}
+
+coder:
+  swagger:
+    enabled: true
