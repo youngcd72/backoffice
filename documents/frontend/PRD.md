@@ -163,7 +163,7 @@ workspace/coder-frontend/src/
 - `/login`에서 아이디·비밀번호로 `POST /api/v1/auth/login`을 호출하고, JWT와 사용자 정보를 `localStorage`(`coder_token`, `coder_user`)에 저장한다.
 - 라우터 가드: JWT가 없거나 만료되면 `/login`으로, 로그인 상태에서 `/login`에 오면 `/dashboard`로 보낸다.
 - API가 401을 반환하면 저장 정보를 지우고 `/login`으로 이동한다.
-- 로그인 화면에 브랜드 "Toshiba Global Commerce Solutions"를 표시한다.
+- 로그인 화면에 브랜드 문구 "A perfect day for sleeping in"을 표시한다.
 
 ### FR-02. 앱 프레임
 | 요소 | 요구사항 |

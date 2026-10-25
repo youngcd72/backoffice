@@ -5,7 +5,7 @@
         <span class="brand-rule" aria-hidden="true"></span>
         <span class="brand-plate">CODER</span>
         <p class="brand-name">CODER 기본 프레임워크</p>
-        <p class="brand-owner">Toshiba Global Commerce Solutions</p>
+        <p class="brand-owner">A perfect day for sleeping in</p>
       </div>
     </aside>
 
