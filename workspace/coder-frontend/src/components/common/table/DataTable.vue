@@ -462,7 +462,7 @@ const handleRowDblClick = (row) => {
 
 /* 테이블 헤더 */
 .custom-table thead tr {
-  background: var(--ds-pine-100);
+  background: var(--ds-slate-100);
   border-bottom: 1px solid var(--ds-rule-strong);
 }
 
@@ -470,7 +470,7 @@ const handleRowDblClick = (row) => {
   padding: 10px 12px;
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
   white-space: nowrap;
 }
 
@@ -493,13 +493,13 @@ const handleRowDblClick = (row) => {
 }
 
 .custom-table th.is-sortable:hover {
-  color: var(--ds-pine-500);
+  color: var(--ds-slate-500);
 }
 
 .sort-icon {
   display: flex;
   align-items: center;
-  color: var(--ds-pine-500);
+  color: var(--ds-slate-500);
 }
 
 /* 테이블 바디 셀 */
@@ -515,11 +515,11 @@ const handleRowDblClick = (row) => {
 }
 
 .table-row:hover {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .table-row.is-selected {
-  background: var(--ds-pine-100);
+  background: var(--ds-slate-100);
 }
 
 .custom-table.is-dense th,
@@ -527,13 +527,13 @@ const handleRowDblClick = (row) => {
   padding: 7px 8px;
 }
 
-/* 활성 행: 사인 옐로 바 + 옅은 옐로 바탕 */
+/* 활성 행: 포일 바 + 옅은 포일 바탕 */
 .table-row.is-active {
-  background: var(--ds-sign-tint);
+  background: var(--ds-foil-tint);
 }
 
 .table-row.is-active > td:first-child {
-  box-shadow: inset 4px 0 0 var(--ds-sign);
+  box-shadow: inset 4px 0 0 var(--ds-foil);
 }
 
 /* 행 상태(_flag) 컬럼 */
@@ -548,11 +548,11 @@ const handleRowDblClick = (row) => {
 }
 
 .table-row.is-flag-I .td-flag {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
 }
 
 .table-row.is-flag-U .td-flag {
-  background: var(--ds-sign);
+  background: var(--ds-foil);
 }
 
 .table-row.is-flag-D .td-flag {
@@ -575,7 +575,7 @@ const handleRowDblClick = (row) => {
 }
 
 .table-checkbox {
-  accent-color: var(--ds-pine-700);
+  accent-color: var(--ds-slate-700);
   width: 16px;
   height: 16px;
   cursor: pointer;
@@ -604,7 +604,7 @@ const handleRowDblClick = (row) => {
   width: 24px;
   height: 24px;
   border: 2px solid var(--ds-rule);
-  border-top-color: var(--ds-pine-700);
+  border-top-color: var(--ds-slate-700);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -649,7 +649,7 @@ const handleRowDblClick = (row) => {
 }
 
 .page-nav-btn:hover:not(:disabled), .page-number-btn:hover:not(.is-active) {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-color: var(--ds-rule-strong);
 }
 
@@ -659,10 +659,10 @@ const handleRowDblClick = (row) => {
 }
 
 .page-number-btn.is-active {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
   font-weight: 600;
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
 }
 
 .page-nav-btn:disabled {

@@ -1057,20 +1057,20 @@ onBeforeUnmount(() => {
   display: inline-block;
   font-family: inherit;
   user-select: none;
-  --dp-primary: var(--ds-pine-700);
-  --dp-primary-hover: var(--ds-pine-900);
-  --dp-secondary: var(--ds-pine-500);
+  --dp-primary: var(--ds-slate-700);
+  --dp-primary-hover: var(--ds-slate-900);
+  --dp-secondary: var(--ds-slate-500);
   --dp-bg: var(--ds-surface);
   --dp-surface: var(--ds-surface);
-  --dp-surface-hover: var(--ds-pine-050);
+  --dp-surface-hover: var(--ds-slate-050);
   --dp-border: var(--ds-rule-strong);
   --dp-border-hover: var(--ds-ink-3);
-  --dp-border-focus: var(--ds-pine-700);
+  --dp-border-focus: var(--ds-slate-700);
   --dp-text: var(--ds-ink);
   --dp-text-muted: var(--ds-ink-3);
   --dp-text-dimmed: var(--ds-rule-strong);
-  --dp-range-bg: var(--ds-pine-100);
-  --dp-range-hover-bg: var(--ds-pine-050);
+  --dp-range-bg: var(--ds-slate-100);
+  --dp-range-hover-bg: var(--ds-slate-050);
   --dp-shadow: var(--ds-shadow-overlay);
   --dp-radius: var(--ds-radius-control);
 }
@@ -1249,7 +1249,7 @@ onBeforeUnmount(() => {
 /* --- 사이드바 프리셋 --- */
 .preset-sidebar {
   width: 110px;
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-right: 1px solid var(--ds-rule);
   padding: 12px 8px;
   display: flex;
@@ -1285,8 +1285,8 @@ onBeforeUnmount(() => {
 }
 
 .preset-item:hover {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-900);
 }
 
 /* --- 메인 캘린더 바디 --- */
@@ -1326,7 +1326,7 @@ onBeforeUnmount(() => {
 
 .nav-btn:hover {
   background: var(--dp-surface-hover);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 .header-titles {
@@ -1351,7 +1351,7 @@ onBeforeUnmount(() => {
 
 .title-btn:hover {
   background: var(--dp-surface-hover);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 /* --- 요일 헤더 그리드 --- */
@@ -1375,7 +1375,7 @@ onBeforeUnmount(() => {
 }
 
 .weekday-cell.sat {
-  color: var(--ds-pine-500);
+  color: var(--ds-slate-500);
 }
 
 /* --- 일자 그리드 --- */
@@ -1413,12 +1413,12 @@ onBeforeUnmount(() => {
 
 .day-cell:hover:not(.is-disabled):not(.is-selected) {
   background: var(--dp-surface-hover);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
-/* 오늘 표시: pine-500 1px 링 */
+/* 오늘 표시: slate-500 1px 링 */
 .day-cell.is-today {
-  box-shadow: inset 0 0 0 1px var(--ds-pine-500);
+  box-shadow: inset 0 0 0 1px var(--ds-slate-500);
 }
 
 .today-indicator {
@@ -1434,7 +1434,7 @@ onBeforeUnmount(() => {
 .day-cell.in-range {
   background: var(--dp-range-bg);
   border-radius: 0;
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 .day-cell.in-range-hover {
@@ -1443,8 +1443,8 @@ onBeforeUnmount(() => {
 }
 
 .day-cell.hover-target {
-  background: var(--ds-pine-100);
-  box-shadow: inset 0 0 0 1px var(--ds-pine-700);
+  background: var(--ds-slate-100);
+  box-shadow: inset 0 0 0 1px var(--ds-slate-700);
   border-radius: var(--ds-radius-control);
 }
 
@@ -1514,12 +1514,12 @@ onBeforeUnmount(() => {
 .year-cell:hover {
   background: var(--dp-surface-hover);
   border-color: var(--ds-rule);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 .month-cell.is-current-month,
 .year-cell.is-current-year {
-  border-color: var(--ds-pine-500);
+  border-color: var(--ds-slate-500);
 }
 
 .month-cell.is-selected,
@@ -1544,7 +1544,7 @@ onBeforeUnmount(() => {
 .footer-action-btn {
   background: none;
   border: none;
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -1556,7 +1556,7 @@ onBeforeUnmount(() => {
 
 .footer-action-btn:hover {
   background: var(--dp-surface-hover);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 .footer-status-text {
@@ -1565,7 +1565,7 @@ onBeforeUnmount(() => {
 }
 
 .footer-status-text .success-text {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-weight: 600;
 }
 

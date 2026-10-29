@@ -3,7 +3,7 @@
     <!-- 1. TOP BAR : 브랜드 + 사용자 정보 / 로그아웃 -->
     <div class="top-bar">
       <div class="brand" @click="handleBrandClick">
-        <span class="brand-title">CODER</span>
+        <BrandLogo :size="20" class="brand-title" />
         <span class="brand-subtitle">기본 프레임워크</span>
       </div>
 
@@ -258,6 +258,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import MdiTabBar from '@/components/frame/MdiTabBar.vue';
 import AlarmCenter from '@/components/frame/AlarmCenter.vue';
+import { BrandLogo } from '@/components';
 import { useTabsStore, type MdiTab } from '@/stores/tabs';
 import { useAlarmStore } from '@/stores/alarm';
 import type { Alarm } from '@/api/common/alarm';
@@ -847,25 +848,27 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   z-index: 101;
 }
 
 .brand {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
 }
 
-.brand-title {
+/* 슬레이트 위 흰 라인아트 로고 */
+.brand .brand-title {
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  gap: 8px;
   color: var(--ds-ink-inverse);
 }
 
 .brand-subtitle {
+  padding-left: 12px;
+  border-left: 1px solid var(--ds-slate-500);
   font-size: 12px;
   font-weight: 400;
   color: var(--ds-ink-inverse);
@@ -880,7 +883,7 @@ onUnmounted(() => {
 
 .welcome-text {
   font-size: 12px;
-  color: var(--ds-pine-100);
+  color: var(--ds-slate-100);
   margin-right: 8px;
 }
 
@@ -897,7 +900,7 @@ onUnmounted(() => {
   padding: 0 10px;
   border: none;
   background: transparent;
-  color: var(--ds-pine-100);
+  color: var(--ds-slate-100);
   font-size: 12px;
   cursor: pointer;
   border-radius: var(--ds-radius-control);
@@ -905,7 +908,7 @@ onUnmounted(() => {
 }
 
 .top-text-btn:hover {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 
@@ -917,8 +920,8 @@ onUnmounted(() => {
   align-items: center;
   gap: 4px;
   padding: 0 12px;
-  background: var(--ds-pine-700);
-  border-bottom: 1px solid var(--ds-pine-900);
+  background: var(--ds-slate-700);
+  border-bottom: 1px solid var(--ds-slate-900);
   z-index: 100;
 }
 
@@ -931,14 +934,14 @@ onUnmounted(() => {
   border: none;
   border-radius: var(--ds-radius-control);
   background: transparent;
-  color: var(--ds-pine-100);
+  color: var(--ds-slate-100);
   cursor: pointer;
   transition: background-color var(--ds-ease), color var(--ds-ease);
   flex-shrink: 0;
 }
 
 .sidebar-toggle-btn:hover {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
   color: var(--ds-ink-inverse);
 }
 
@@ -960,7 +963,7 @@ onUnmounted(() => {
   border: none;
   border-radius: 0;
   background: transparent;
-  color: var(--ds-pine-100);
+  color: var(--ds-slate-100);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -969,7 +972,7 @@ onUnmounted(() => {
 }
 
 .gnb-item:hover {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
   color: var(--ds-ink-inverse);
 }
 
@@ -977,11 +980,11 @@ onUnmounted(() => {
   background: transparent;
   color: var(--ds-ink-inverse);
   font-weight: 600;
-  box-shadow: inset 0 -3px 0 var(--ds-sign);
+  box-shadow: inset 0 -3px 0 var(--ds-foil);
 }
 
 .gnb-item.active:hover {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
 }
 
 .gnb-badge {
@@ -989,8 +992,8 @@ onUnmounted(() => {
   font-weight: 600;
   line-height: 16px;
   padding: 0 5px;
-  background: var(--ds-sign);
-  color: var(--ds-pine-900);
+  background: var(--ds-foil);
+  color: var(--ds-slate-900);
   border-radius: 2px;
 }
 
@@ -1026,7 +1029,7 @@ onUnmounted(() => {
 }
 
 .gnb-search-item.active {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .gnb-search-item-label {
@@ -1088,7 +1091,7 @@ onUnmounted(() => {
   height: 100%;
   border: none;
   border-radius: 0;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
   cursor: pointer;
   flex-shrink: 0;
@@ -1096,7 +1099,7 @@ onUnmounted(() => {
 }
 
 .gnb-search-btn:hover {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
 }
 
 /* ===== 3. BODY ===== */
@@ -1139,8 +1142,8 @@ onUnmounted(() => {
 }
 
 .sidebar-tab.active {
-  color: var(--ds-pine-900);
-  box-shadow: inset 0 -2px 0 var(--ds-pine-700);
+  color: var(--ds-slate-900);
+  box-shadow: inset 0 -2px 0 var(--ds-slate-700);
 }
 
 .sidebar-header {
@@ -1154,7 +1157,7 @@ onUnmounted(() => {
 .sidebar-header-dot {
   width: 3px;
   height: 14px;
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   flex-shrink: 0;
 }
 
@@ -1194,14 +1197,14 @@ onUnmounted(() => {
   padding: 8px 16px 4px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
 }
 
 .group-title::before {
   content: '';
   width: 6px;
   height: 6px;
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   flex-shrink: 0;
 }
 
@@ -1230,15 +1233,15 @@ onUnmounted(() => {
 }
 
 .sidebar-item:hover {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   color: var(--ds-ink);
 }
 
 .sidebar-item.active {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-900);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--ds-pine-700);
+  box-shadow: inset 3px 0 0 var(--ds-slate-700);
 }
 
 .sidebar-item:focus-visible {
@@ -1270,8 +1273,8 @@ onUnmounted(() => {
 }
 
 .menu-badge.primary {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-900);
   border: 1px solid var(--ds-rule-strong);
 }
 
@@ -1349,7 +1352,7 @@ onUnmounted(() => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
 }
 
 .status-label {

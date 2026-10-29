@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : CallLogMapper.xml
+    Description   : 인터페이스 호출 이력 Mapper (TB_INFC_CALL_L)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.27  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.api.common.calllog.mapper.CallLogMapper">
+
+    <!--
+           인터페이스 호출 이력을 한 번에 여러 건 등록한다.
+           (URL·오류코드는 컬럼 길이에 맞춰 자른다. 본문은 CallLogMasker 가 최대 길이로 자른다)
+           작성자 : ywkim
+      -->
+    <insert id="insertCallLogList" useGeneratedKeys="false">
+        /* CallLogMapper.insertCallLogList 인터페이스 호출 이력을 한 번에 여러 건 등록한다. */
+        INSERT INTO TB_INFC_CALL_L (
+            CALL_SN, TRC_ID, KEY_ID, LNK_ORG_ID, INFC_ID, HTTP_METH_NM, URL, HTTP_STAT_CD, CLNT_IP_ADDR,
+            RQMT_DTTM, RSPN_DTTM, ELAPSED_MS, ERR_CD, RQMT_CONT, RSPN_CONT,
+            FIRS_REGR_ID, FIRS_REG_DT
+        ) VALUES
+        <foreach collection="callLogList" item="item" separator=",">
+        (
+            NEXTVAL('SQ_TB_INFC_CALL_L_CALL_SN'), #{item.trcId}, #{item.keyId}, #{item.lnkOrgId}, #{item.infcId},
+            #{item.httpMethNm}, LEFT(#{item.url}, 500), #{item.httpStatCd}, #{item.clntIpAddr},
+            #{item.rqmtDttm}, #{item.rspnDttm}, #{item.elapsedMs}, LEFT(#{item.errCd}, 100), #{item.rqmtCont}, #{item.rspnCont},
+            #{item.regrId}, CURRENT_TIMESTAMP
+        )
+        </foreach>
+    </insert>
+
+</mapper>

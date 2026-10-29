@@ -841,9 +841,9 @@ select.cell-input option {
 }
 
 .cell-search-btn:hover {
-  color: var(--ds-pine-900);
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
+  color: var(--ds-slate-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
 }
 
 .cell-search-btn:focus-visible {

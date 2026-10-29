@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : LinkClientMapper.xml
+    Description   : 연계키·연계기관·인터페이스 권한 조회 Mapper (TB_LNK_KEY_M, TB_LNK_ORG_M, TB_INFC_M, TB_LNK_ORG_INFC_R)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.27  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.api.common.client.mapper.LinkClientMapper">
+
+    <!--
+           키ID로 연계키와 연계기관 정보를 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectLinkClient" resultType="kr.or.coder.api.common.client.LinkClient">
+        /* LinkClientMapper.selectLinkClient 키ID로 연계키와 연계기관 정보를 조회한다. */
+        SELECT K.KEY_ID,
+               K.LNK_ORG_ID,
+               O.LNK_ORG_NM,
+               O.CHNL_CLS_CD,
+               K.ENC_KEY_VAL,
+               K.KMS_KEY_ID,
+               K.KEY_STAT_CD,
+               K.ISSU_DTTM,
+               K.EXPI_DTTM,
+               K.ALLW_IP_ADDR,
+               K.MI_CALL_LMT_CNT,
+               K.DAY_CALL_LMT_CNT,
+               K.SIMU_RQMT_LMT_CNT,
+               O.USE_YN AS ORG_USE_YN,
+               O.USE_ST_DT,
+               O.USE_END_DT
+        FROM TB_LNK_KEY_M K
+        JOIN TB_LNK_ORG_M O
+          ON O.LNK_ORG_ID = K.LNK_ORG_ID
+        WHERE K.KEY_ID = #{keyId}
+    </select>
+
+    <!--
+           인터페이스ID로 인터페이스 정보를 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectLinkInterface" resultType="kr.or.coder.api.common.client.LinkInterface">
+        /* LinkClientMapper.selectLinkInterface 인터페이스ID로 인터페이스 정보를 조회한다. */
+        SELECT INFC_ID,
+               INFC_NM,
+               HTTP_METH_NM,
+               URL,
+               BODY_LOG_YN,
+               MASK_FLD_CONT,
+               USE_YN
+        FROM TB_INFC_M
+        WHERE INFC_ID = #{infcId}
+    </select>
+
+    <!--
+           연계기관에 허용된 사용 중인 인터페이스ID 목록을 조회한다.
+           작성자 : ywkim
+      -->
+    <select id="selectAllowedInfcIdList" resultType="string">
+        /* LinkClientMapper.selectAllowedInfcIdList 연계기관에 허용된 사용 중인 인터페이스ID 목록을 조회한다. */
+        SELECT R.INFC_ID
+        FROM TB_LNK_ORG_INFC_R R
+        JOIN TB_INFC_M I
+          ON I.INFC_ID = R.INFC_ID
+        WHERE R.LNK_ORG_ID = #{lnkOrgId}
+          AND R.USE_YN = 'Y'
+          AND I.USE_YN = 'Y'
+        ORDER BY R.INFC_ID
+    </select>
+
+</mapper>

@@ -10,6 +10,9 @@
 			"path": "coder-batch"
 		},
 		{
+			"path": "coder-api"
+		},
+		{
 			"path": "coder-core"
 		}
 	],

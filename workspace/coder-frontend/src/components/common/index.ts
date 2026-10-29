@@ -33,6 +33,7 @@ import BaseSearchCodeComp from './search-code/BaseSearchCode.vue';
 import ComSearchCodeComp from './search-code/ComSearchCode.vue';
 import ComSearchCodePopupComp from './search-code/ComSearchCodePopup.vue';
 import ComFileUploadComp from './file-upload/ComFileUpload.vue';
+import BrandLogoComp from './brand/BrandLogo.vue';
 
 export const Button = ButtonComp as any;
 export const Input = InputComp as any;
@@ -54,6 +55,7 @@ export const BaseSearchCode = BaseSearchCodeComp as any;
 export const ComSearchCode = ComSearchCodeComp as any;
 export const ComSearchCodePopup = ComSearchCodePopupComp as any;
 export const ComFileUpload = ComFileUploadComp as any;
+export const BrandLogo = BrandLogoComp as any;
 export type { FileInfo } from '@/api/common/file';
 export type { SearchCodeRow, SearchCodeParams } from '@/api/common/searchCode';
 export type { TreeNode } from './tree/TreeView.vue';

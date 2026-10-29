@@ -137,3 +137,56 @@ INSERT INTO TB_COMM_CD_D (
 ) VALUES
     ('SY', 'SYSM_CLS_CD', '01', 'ERP',    'Y', 1, 'admin', 'admin')
 ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD) DO NOTHING;
+
+-- ---------------------------------------------------------------------
+-- SY / SYSM_CLS_CD : 시스템유형 - coder-api (application.yml coder.log.sysm-cls-cd)
+--   2026-10-27 추가
+-- ---------------------------------------------------------------------
+INSERT INTO TB_COMM_CD_D (
+    WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD, COMM_CTG_DTL_NM, USE_YN, ALIN_SEQ,
+    FIRS_REGR_ID, FINA_REGR_ID
+) VALUES
+    ('SY', 'SYSM_CLS_CD', '02', '대외계', 'Y', 2, 'admin', 'admin')
+ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD) DO NOTHING;
+
+-- ---------------------------------------------------------------------
+-- SY / CHNL_CLS_CD : 채널구분 (TB_LNK_ORG_M.CHNL_CLS_CD, coder-api 연계기관)
+--   2026-10-27 추가
+-- ---------------------------------------------------------------------
+INSERT INTO TB_COMM_CD_M (
+    WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_NM, USE_YN, USR_MNGE_YN, ALIN_SEQ, RMK,
+    FIRS_REGR_ID, FINA_REGR_ID
+) VALUES (
+    'SY', 'CHNL_CLS_CD', '채널구분', 'Y', 'N', NULL, 'TB_LNK_ORG_M.CHNL_CLS_CD',
+    'admin', 'admin'
+) ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD) DO NOTHING;
+
+INSERT INTO TB_COMM_CD_D (
+    WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD, COMM_CTG_DTL_NM, USE_YN, ALIN_SEQ,
+    FIRS_REGR_ID, FINA_REGR_ID
+) VALUES
+    ('SY', 'CHNL_CLS_CD', 'B', 'B2B',         'Y', 1, 'admin', 'admin'),
+    ('SY', 'CHNL_CLS_CD', 'C', 'B2C',         'Y', 2, 'admin', 'admin'),
+    ('SY', 'CHNL_CLS_CD', 'I', '내부 시스템', 'Y', 3, 'admin', 'admin')
+ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD) DO NOTHING;
+
+-- ---------------------------------------------------------------------
+-- SY / KEY_STAT_CD : 키상태 (TB_LNK_KEY_M.KEY_STAT_CD, coder-api 클라이언트 키)
+--   2026-10-27 추가
+-- ---------------------------------------------------------------------
+INSERT INTO TB_COMM_CD_M (
+    WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_NM, USE_YN, USR_MNGE_YN, ALIN_SEQ, RMK,
+    FIRS_REGR_ID, FINA_REGR_ID
+) VALUES (
+    'SY', 'KEY_STAT_CD', '키상태', 'Y', 'N', NULL, 'TB_LNK_KEY_M.KEY_STAT_CD',
+    'admin', 'admin'
+) ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD) DO NOTHING;
+
+INSERT INTO TB_COMM_CD_D (
+    WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD, COMM_CTG_DTL_NM, USE_YN, ALIN_SEQ,
+    FIRS_REGR_ID, FINA_REGR_ID
+) VALUES
+    ('SY', 'KEY_STAT_CD', '01', '사용',     'Y', 1, 'admin', 'admin'),
+    ('SY', 'KEY_STAT_CD', '02', '사용중지', 'Y', 2, 'admin', 'admin'),
+    ('SY', 'KEY_STAT_CD', '03', '폐기',     'Y', 3, 'admin', 'admin')
+ON CONFLICT (WRK_MDUL_CD, COMM_CTG_CD, COMM_CTG_DTL_CD) DO NOTHING;

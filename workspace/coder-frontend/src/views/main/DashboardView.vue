@@ -16,6 +16,7 @@
 import { ref, onMounted } from 'vue'
 import { useToast } from '@/composables/useToast'
 import { msg } from '@/utils/message'
+import { BrandLogo } from '@/components'
 
 const toast = useToast()
 const txtSearch = ref<HTMLInputElement | null>(null)
@@ -74,7 +75,7 @@ onMounted(() => {
 <template>
   <section class="dashboard-search">
     <div class="search-hero">
-      <span class="search-logo" aria-hidden="true">CODER</span>
+      <BrandLogo :size="64" class="search-logo" aria-hidden="true" />
 
       <form id="frmSearch" class="search-form" role="search" @submit.prevent="onFrmSearchSubmit">
         <label for="txtSearch" class="sr-only">검색</label>
@@ -135,18 +136,11 @@ onMounted(() => {
   gap: 28px;
 }
 
-/* 로고 플레이트: 화면ID 플레이트와 같은 표지 (pine-900 바탕 + 사인 옐로) */
-.search-logo {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 18px;
-  font-size: 56px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  color: var(--ds-sign);
-  background: var(--ds-pine-900);
-  border-radius: 2px;
+/* 코튼지 위 먹색 라인아트 로고 */
+.search-hero .search-logo {
+  font-size: 40px;
+  gap: 18px;
+  color: var(--ds-ink);
   user-select: none;
 }
 
@@ -177,7 +171,7 @@ onMounted(() => {
 
 /* 키보드·마우스 포커스: 녹색 테두리 + 옅은 녹색 링 (hover 와 구분된다) */
 .search-box:focus-within {
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 
@@ -238,7 +232,7 @@ onMounted(() => {
   min-width: 84px;
   padding: 0 20px;
   border: none;
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
   font: inherit;
   font-size: 15px;
@@ -248,16 +242,16 @@ onMounted(() => {
 }
 
 .search-btn:hover {
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
 }
 
 /* .search-box 가 overflow:hidden 이라 바깥 포커스 링이 잘리므로 안쪽 링을 쓴다 */
 .search-clear:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--ds-pine-700);
+  box-shadow: inset 0 0 0 2px var(--ds-slate-700);
 }
 
 .search-btn:focus-visible {
-  box-shadow: inset 0 0 0 3px var(--ds-sign);
+  box-shadow: inset 0 0 0 3px var(--ds-foil);
 }
 
 /* 예시 질문: 버튼처럼 꾸미지 않은 글자 링크 */
@@ -281,7 +275,7 @@ onMounted(() => {
 }
 
 .search-example:hover {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

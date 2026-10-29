@@ -13,6 +13,7 @@ Backoffice 프로젝트 진행 시 기본 Framework으로 사용하기 위한 �
 | [`workspace/coder-core`](workspace/coder-core) | 공통 라이브러리 (Composite Build로 각 애플리케이션에 포함) | - |
 | [`workspace/coder-backend`](workspace/coder-backend/README.md) | 관리 콘솔 REST API 서버 | 8080 |
 | [`workspace/coder-batch`](workspace/coder-batch/README.md) | Spring Batch + Quartz 배치 서버 (DB 등록형 직무·스케줄) | 8081 |
+| [`workspace/coder-api`](workspace/coder-api/README.md) | 대외 연계 API 서버 (OAuth2 Client Credentials, 호출 한도·이력) | 8082 |
 | [`workspace/coder-frontend`](workspace/coder-frontend/README.md) | 관리 콘솔 화면 (Vue 3) | 3000 |
 | [`schema`](schema) | DDL, 초기 데이터, 네이밍 약어 사전 | - |
 | [`documents`](documents) | PRD, 화면·배치 프로그램 사양서 | - |
@@ -56,6 +57,7 @@ coder/
     ├── coder-core/
     ├── coder-backend/
     ├── coder-batch/
+    ├── coder-api/
     └── coder-frontend/
 ```
 
@@ -112,6 +114,9 @@ cd workspace/coder-frontend && pnpm install && pnpm dev
 
 # batch (8081, 필요할 때만)
 cd workspace/coder-batch && ./gradlew bootRun
+
+# api (8082, 대외 연계가 필요할 때만)
+cd workspace/coder-api && ./gradlew bootRun
 ```
 
 | 주소 | 내용 |
@@ -120,6 +125,7 @@ cd workspace/coder-batch && ./gradlew bootRun
 | http://localhost:8080/swagger-ui.html | backend API 문서 |
 | http://localhost:8080/actuator/health | backend 상태 (`db`, `redis` UP 확인) |
 | http://localhost:8081/actuator/health | batch 상태 |
+| http://localhost:8082/actuator/health | api 상태 |
 
 > batch 서버가 떠 있는 동안 `USE_YN='Y'`인 배치직무는 cron 스케줄대로 자동 실행됩니다.
 

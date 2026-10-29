@@ -1,50 +1,51 @@
 /*
- * CODER 디자인 시스템 v2
- * 공항·보세 사인 체계: 파인 그린(브랜드) + 사인 옐로(주의·선택·포커스) + 스탬프 레드(폐기·오류)
+ * CODER 디자인 시스템 v3 — 레터프레스
+ * 로고 명함에서 가져온 재료: 슬레이트(돌판) + 코튼지(바탕) + 먹 라인아트 + 골드 포일(신호) + 스탬프 레드(폐기·오류)
  *
  * 규칙
  * - 새 코드는 --ds-* 토큰만 쓴다. 하드코딩 색상 금지.
- * - 사인 옐로는 면(배경)으로 거의 쓰지 않는다: 활성 행 바·활성 탭/메뉴 표시선·포커스 링·화면ID 글자·1회성 경고에만.
- * - 흰 바탕 위 '주의' 글자는 --ds-ochre (옐로 글자는 대비 부족).
+ * - 브랜드 형태는 '선'이다. 면 채움 대신 1.5px 먹 선, 아이콘·로고도 선으로 그린다.
+ * - 포일은 면(배경)으로 거의 쓰지 않는다: 활성 행 바·활성 탭/메뉴 표시선·포커스 링·화면ID 글자·1회성 경고에만.
+ * - 흰 바탕 위 '주의' 글자는 --ds-ochre (포일 글자는 대비 부족).
  * - 그림자는 오버레이(팝업·드롭다운)에만. 그라데이션·글로우·hover 떠오름 없음.
  * - 모서리: 컨트롤 3px · 패널 4px · 오버레이 6px.
- * - 서체: IBM Plex Sans KR 하나. 코드값(키ID·기관ID·감사ID)만 IBM Plex Mono. 숫자 열은 tabular-nums.
+ * - 서체: 본문 IBM Plex Sans KR. 워드마크·화면ID 플레이트만 Montserrat(로고 서체, 넓은 자간). 코드값만 IBM Plex Mono.
  */
 :root {
-  /* ---------- 브랜드 ---------- */
-  --ds-pine-900: #0f3a30;
-  --ds-pine-700: #14463a;
-  --ds-pine-500: #2f6b5b;
-  --ds-pine-100: #e3ece8;
-  --ds-pine-050: #f3f7f5;
+  /* ---------- 브랜드 (슬레이트 · 먹) ---------- */
+  --ds-slate-900: #1f2226;
+  --ds-slate-700: #2f3338;
+  --ds-slate-500: #5b6068;
+  --ds-slate-100: #e4e2db;
+  --ds-slate-050: #f3f2ed;
 
   /* ---------- 신호 ---------- */
-  --ds-sign: #f5c400;
-  --ds-sign-tint: #fff7d1;
-  --ds-ochre: #8a5d00;
+  --ds-foil: #c29a3f;
+  --ds-foil-tint: #f7efda;
+  --ds-ochre: #85621a;
   --ds-stamp: #b8321f;
   --ds-stamp-hover: #96281a;
   --ds-stamp-tint: #fbebe7;
 
-  /* ---------- 바탕 · 잉크 · 괘선 ---------- */
-  --ds-ground: #edf1f0;
-  --ds-surface: #ffffff;
-  --ds-surface-muted: #eef1f0;
-  --ds-ink: #17201d;
-  --ds-ink-2: #4a5652;
-  --ds-ink-3: #77827e;
+  /* ---------- 바탕(코튼지) · 잉크 · 괘선 ---------- */
+  --ds-ground: #ebe9e3;
+  --ds-surface: #fdfcfa;
+  --ds-surface-muted: #f1efe9;
+  --ds-ink: #1f2226;
+  --ds-ink-2: #4c5056;
+  --ds-ink-3: #7b7e84;
   --ds-ink-inverse: #ffffff;
-  --ds-rule: #dde3e0;
-  --ds-rule-strong: #b3bfba;
-  --ds-scrim: rgba(15, 32, 27, 0.42);
+  --ds-rule: #dedad1;
+  --ds-rule-strong: #bcb8ae;
+  --ds-scrim: rgba(24, 26, 29, 0.46);
 
   /* ---------- 형태 ---------- */
   --ds-radius-control: 3px;
   --ds-radius-panel: 4px;
   --ds-radius-overlay: 6px;
-  --ds-shadow-overlay: 0 14px 36px rgba(15, 58, 48, 0.28);
-  --ds-focus: 0 0 0 2px var(--ds-surface), 0 0 0 4px var(--ds-pine-900), 0 0 0 6px var(--ds-sign);
-  --ds-focus-field: 0 0 0 3px var(--ds-pine-100);
+  --ds-shadow-overlay: 0 14px 36px rgba(24, 26, 29, 0.26);
+  --ds-focus: 0 0 0 2px var(--ds-surface), 0 0 0 4px var(--ds-slate-900), 0 0 0 6px var(--ds-foil);
+  --ds-focus-field: 0 0 0 3px var(--ds-slate-100);
   --ds-control-height: 34px;
   --ds-control-height-sm: 30px;
   --ds-ease: 0.12s ease;
@@ -52,6 +53,7 @@
   /* ---------- 서체 ---------- */
   --ds-font: 'IBM Plex Sans KR', 'Malgun Gothic', system-ui, sans-serif;
   --ds-font-code: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --ds-font-brand: 'Montserrat', var(--ds-font);
 
   /* ---------- 레이아웃 ---------- */
   --header-height: 64px;
@@ -61,34 +63,34 @@
   /* ---------- 기존 토큰 (호환용 별칭 — 새 코드에서 쓰지 말 것) ---------- */
   --font-sans: var(--ds-font);
   --font-mono: var(--ds-font-code);
-  --brand-green-darker: var(--ds-pine-900);
-  --brand-green-dark: var(--ds-pine-900);
-  --brand-green: var(--ds-pine-700);
-  --brand-green-light: var(--ds-pine-500);
-  --mint-bg: var(--ds-pine-100);
+  --brand-green-darker: var(--ds-slate-900);
+  --brand-green-dark: var(--ds-slate-900);
+  --brand-green: var(--ds-slate-700);
+  --brand-green-light: var(--ds-slate-500);
+  --mint-bg: var(--ds-slate-100);
   --mint-border: var(--ds-rule-strong);
   --bg-app: var(--ds-ground);
   --bg-sidebar: var(--ds-surface);
-  --bg-header: var(--ds-pine-900);
+  --bg-header: var(--ds-slate-900);
   --bg-card: var(--ds-surface);
-  --bg-card-hover: var(--ds-pine-050);
+  --bg-card-hover: var(--ds-slate-050);
   --bg-card-solid: var(--ds-surface);
   --bg-input: var(--ds-surface);
-  --bg-hover: var(--ds-pine-050);
+  --bg-hover: var(--ds-slate-050);
   --border-color: var(--ds-rule-strong);
-  --border-focus: var(--ds-pine-700);
+  --border-focus: var(--ds-slate-700);
   --border-card: var(--ds-rule);
   --text-primary: var(--ds-ink);
   --text-secondary: var(--ds-ink-2);
   --text-muted: var(--ds-ink-3);
   --text-inverse: var(--ds-ink-inverse);
-  --primary: var(--ds-pine-700);
-  --primary-hover: var(--ds-pine-900);
-  --primary-glow: var(--ds-pine-100);
-  --accent-cyan: var(--ds-pine-500);
-  --accent-cyan-glow: var(--ds-pine-100);
-  --accent-emerald: var(--ds-pine-700);
-  --accent-emerald-glow: var(--ds-pine-100);
+  --primary: var(--ds-slate-700);
+  --primary-hover: var(--ds-slate-900);
+  --primary-glow: var(--ds-slate-100);
+  --accent-cyan: var(--ds-slate-500);
+  --accent-cyan-glow: var(--ds-slate-100);
+  --accent-emerald: var(--ds-slate-700);
+  --accent-emerald-glow: var(--ds-slate-100);
   --accent-amber: var(--ds-ochre);
   --accent-rose: var(--ds-stamp);
   --shadow-sm: none;
@@ -156,7 +158,7 @@ table {
 }
 
 ::selection {
-  background: var(--ds-sign-tint);
+  background: var(--ds-foil-tint);
   color: var(--ds-ink);
 }
 
@@ -201,13 +203,13 @@ table {
 }
 
 .btn-primary {
-  background: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 .btn-primary:hover {
-  background: var(--ds-pine-900);
-  border-color: var(--ds-pine-900);
+  background: var(--ds-slate-900);
+  border-color: var(--ds-slate-900);
 }
 
 .btn-secondary {
@@ -216,9 +218,9 @@ table {
   color: var(--ds-ink);
 }
 .btn-secondary:hover {
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
+  color: var(--ds-slate-900);
 }
 
 .btn-danger {
@@ -241,7 +243,7 @@ table {
 }
 .btn-icon:hover {
   color: var(--ds-ink);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 /* 패널: 괘선 한 줄, 그림자 없음 */
@@ -265,9 +267,9 @@ table {
   border: 1px solid currentColor;
   border-radius: 2px;
 }
-.badge-success { color: var(--ds-pine-700); background: var(--ds-pine-100); }
-.badge-info    { color: var(--ds-pine-500); background: var(--ds-pine-050); }
-.badge-warning { color: var(--ds-ochre);    background: var(--ds-sign-tint); }
+.badge-success { color: var(--ds-slate-700); background: var(--ds-slate-100); }
+.badge-info    { color: var(--ds-slate-500); background: var(--ds-slate-050); }
+.badge-warning { color: var(--ds-ochre);    background: var(--ds-foil-tint); }
 .badge-danger  { color: var(--ds-stamp);    background: var(--ds-stamp-tint); }
 
 .input-control {
@@ -283,7 +285,7 @@ table {
   transition: border-color var(--ds-ease), box-shadow var(--ds-ease);
 }
 .input-control:focus {
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 
@@ -305,21 +307,21 @@ table {
   color: var(--ds-ink-2);
 }
 
-/* 화면ID 플레이트: 운영자가 화면을 부르는 이름(SYLK050)을 게이트 표지처럼 세운다 */
+/* 화면ID 플레이트: 운영자가 화면을 부르는 이름(SYLK050)을 포일 박 가공 표지처럼 세운다 */
 .page-plate {
   display: inline-flex;
   align-items: center;
   flex: none;
   height: 28px;
   padding: 0 10px;
-  font-family: var(--ds-font);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--ds-font-brand);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  color: var(--ds-sign);
-  background: var(--ds-pine-900);
+  color: var(--ds-foil);
+  background: var(--ds-slate-900);
   border-radius: 2px;
 }
 
@@ -353,6 +355,6 @@ table {
   height: 8px;
   border-radius: 50%;
 }
-.pulse-dot.online  { background-color: var(--ds-pine-500); }
-.pulse-dot.warning { background-color: var(--ds-sign); box-shadow: 0 0 0 1px var(--ds-ochre); }
+.pulse-dot.online  { background-color: var(--ds-slate-500); }
+.pulse-dot.warning { background-color: var(--ds-foil); box-shadow: 0 0 0 1px var(--ds-ochre); }
 .pulse-dot.offline { background-color: var(--ds-stamp); }

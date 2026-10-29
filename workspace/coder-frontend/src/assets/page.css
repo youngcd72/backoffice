@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
-  border-bottom: 2px solid var(--ds-pine-900);
+  border-bottom: 2px solid var(--ds-slate-900);
 }
 
 .page-title {
@@ -96,7 +96,7 @@
 
 /* 건수는 오류가 아니므로 브랜드 색 */
 .total-count {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-variant-numeric: tabular-nums;
 }
 
@@ -127,9 +127,9 @@
   white-space: nowrap;
 }
 
-.badge-ok   { color: var(--ds-pine-700); background: var(--ds-pine-100); }
-.badge-info { color: var(--ds-pine-500); background: var(--ds-pine-050); }
-.badge-warn { color: var(--ds-ochre);    background: var(--ds-sign-tint); }
+.badge-ok   { color: var(--ds-slate-700); background: var(--ds-slate-100); }
+.badge-info { color: var(--ds-slate-500); background: var(--ds-slate-050); }
+.badge-warn { color: var(--ds-ochre);    background: var(--ds-foil-tint); }
 .badge-err  { color: var(--ds-stamp);    background: var(--ds-stamp-tint); }
 .badge-mute { color: var(--ds-ink-3);    background: var(--ds-surface-muted); }
 
@@ -186,7 +186,7 @@
 .cell-input:focus,
 .cell-select:focus {
   outline: none;
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 
@@ -207,7 +207,7 @@
 .cell-check {
   width: 16px;
   height: 16px;
-  accent-color: var(--ds-pine-700);
+  accent-color: var(--ds-slate-700);
   cursor: pointer;
 }
 
@@ -238,7 +238,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--ds-ink-2);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .dtl-value {
@@ -281,7 +281,7 @@
 
 .dtl-textarea:focus {
   outline: none;
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 

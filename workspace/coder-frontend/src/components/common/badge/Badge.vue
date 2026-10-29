@@ -96,19 +96,19 @@ defineProps({
   background: currentColor;
 }
 
-/* 변형별 색상: 성공/정상 pine, 경고 ochre, 오류 stamp, 중립 ink-3 */
+/* 변형별 색상: 성공/정상 slate, 경고 ochre, 오류 stamp, 중립 ink-3 */
 .badge-primary {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-700);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-700);
 }
 
 .badge-success {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-700);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-700);
 }
 
 .badge-warning {
-  background: var(--ds-sign-tint);
+  background: var(--ds-foil-tint);
   color: var(--ds-ochre);
 }
 
@@ -118,8 +118,8 @@ defineProps({
 }
 
 .badge-info {
-  background: var(--ds-pine-050);
-  color: var(--ds-pine-500);
+  background: var(--ds-slate-050);
+  color: var(--ds-slate-500);
 }
 
 .badge-neutral {

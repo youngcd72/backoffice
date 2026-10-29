@@ -1,0 +1,4 @@
+rootProject.name = 'coder-api'
+
+// Gradle Composite Build: Automatically substitute and include coder-core modules locally
+includeBuild('../coder-core')

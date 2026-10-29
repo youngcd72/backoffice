@@ -1,0 +1,20 @@
+# -------------------------------------------------------------------
+# local - 개발자 PC (프로필 미지정 시 기본값)
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:postgresql://localhost:5432/coder?currentSchema=coder
+      username: coder
+      password: ${CODER_API_DB_PASSWORD:coder1234!}
+
+coder:
+  kms:
+    local:
+      # 로컬 개발 전용 KEK (Base64 32 bytes). 비우면 재기동 시 발급한 클라이언트 비밀키를 복호화할 수 없다.
+      # 운영에서는 local KMS 를 쓸 수 없다 (KmsConfig 가 prod 프로필 기동을 거부).
+      master-key: ${CODER_KMS_MASTER_KEY:SkGMuKUqBsOPsIO/4mtNQouYMef6yarOzjKVU3N2ndA=}
+
+logging:
+  level:
+    kr.or.coder: DEBUG

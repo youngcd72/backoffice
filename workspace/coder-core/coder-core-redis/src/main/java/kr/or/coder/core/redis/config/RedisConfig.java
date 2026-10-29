@@ -10,12 +10,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+import java.time.Duration;
 
 /**
  * Redis 연결, RedisTemplate, HTTP 세션 저장소 설정
@@ -38,7 +41,7 @@ public class RedisConfig {
     private final RedisProperties redisProperties;
 
     /**
-     * Redis 접속 설정으로 Lettuce 커넥션 팩토리를 생성
+     * Redis 접속 설정으로 Lettuce 커넥션 팩토리를 생성 (명령 타임아웃 coder.redis.timeout 밀리초)
      * @return Redis 커넥션 팩토리
      */
     @Bean
@@ -52,7 +55,10 @@ public class RedisConfig {
         }
         configuration.setDatabase(redisProperties.getDatabase());
 
-        return new LettuceConnectionFactory(configuration);
+        LettuceClientConfiguration clientConfiguration = LettuceClientConfiguration.builder()
+                .commandTimeout(Duration.ofMillis(redisProperties.getTimeout()))
+                .build();
+        return new LettuceConnectionFactory(configuration, clientConfiguration);
     }
 
     /**

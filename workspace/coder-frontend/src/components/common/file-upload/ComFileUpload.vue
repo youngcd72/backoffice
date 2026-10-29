@@ -389,10 +389,10 @@ defineExpose({
   --fu-bg: var(--ds-surface);
   --fu-bg-muted: var(--ds-surface-muted);
   --fu-btn-bg: var(--ds-surface);
-  --fu-btn-bg-hover: var(--ds-pine-050);
+  --fu-btn-bg-hover: var(--ds-slate-050);
   --fu-text: var(--ds-ink);
   --fu-text-muted: var(--ds-ink-3);
-  --fu-accent: var(--ds-pine-700);
+  --fu-accent: var(--ds-slate-700);
 
   display: inline-flex;
   align-items: flex-start;
@@ -414,7 +414,7 @@ defineExpose({
 
 .file-list.is-drag-over {
   border-color: var(--fu-accent);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   box-shadow: var(--ds-focus-field);
 }
 
@@ -437,7 +437,7 @@ defineExpose({
 
 .file-check {
   margin: 0;
-  accent-color: var(--ds-pine-700);
+  accent-color: var(--ds-slate-700);
 }
 
 .file-name {
@@ -471,8 +471,8 @@ defineExpose({
 
 .file-btn:hover:not(:disabled) {
   background: var(--fu-btn-bg-hover);
-  border-color: var(--ds-pine-700);
-  color: var(--ds-pine-900);
+  border-color: var(--ds-slate-700);
+  color: var(--ds-slate-900);
 }
 
 .file-btn:focus-visible {

@@ -278,7 +278,7 @@ function onCdsPrgmChange(row: SearchCodeRow | null, rows: SearchCodeRow[]): void
 
 .page-title-bar {
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--ds-pine-900);
+  border-bottom: 2px solid var(--ds-slate-900);
 }
 
 .page-title {

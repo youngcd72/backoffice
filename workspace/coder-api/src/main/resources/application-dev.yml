@@ -1,0 +1,14 @@
+# -------------------------------------------------------------------
+# dev - 개발 서버
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      jdbc-url: ${CODER_API_DB_URL:jdbc:postgresql://localhost:5432/coder?currentSchema=coder}
+      username: ${CODER_API_DB_USERNAME:coder}
+      password: ${CODER_API_DB_PASSWORD}
+
+coder:
+  kms:
+    local:
+      master-key: ${CODER_KMS_MASTER_KEY}

@@ -798,7 +798,7 @@ onMounted(async () => {
 
 .detail-textarea:focus {
   outline: none;
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 

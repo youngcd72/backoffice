@@ -137,14 +137,14 @@ function selectNode(item: VisibleNode): void {
 }
 
 .tree-item:hover {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .tree-item.is-selected {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-900);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--ds-pine-700);
+  box-shadow: inset 3px 0 0 var(--ds-slate-700);
 }
 
 .tree-toggle {
@@ -158,7 +158,7 @@ function selectNode(item: VisibleNode): void {
   font-family: inherit;
   font-size: 12px;
   line-height: 1;
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   background: var(--ds-surface);
   border: 1px solid var(--ds-rule-strong);
   border-radius: 2px;
@@ -167,7 +167,7 @@ function selectNode(item: VisibleNode): void {
 }
 
 .tree-toggle:hover {
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
 }
 
 .tree-toggle:focus-visible {

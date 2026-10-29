@@ -269,7 +269,7 @@ defineExpose({
   --input-bg-focus: var(--ds-surface);
   --input-border: var(--ds-rule-strong);
   --input-border-hover: var(--ds-ink-3);
-  --input-border-focus: var(--ds-pine-700);
+  --input-border-focus: var(--ds-slate-700);
   --input-text: var(--ds-ink);
   --input-text-muted: var(--ds-ink-3);
   --input-radius: var(--ds-radius-control);
@@ -365,7 +365,7 @@ defineExpose({
 
 .input-action-btn:hover {
   color: var(--input-text);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .input-action-btn:focus-visible {

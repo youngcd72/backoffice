@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    File Name     : logback-spring.xml
+    Description   : coder-api 로그 설정
+
+    1) logs/coder-api.log           : 전체 로그 (INFO 이상, 텍스트)
+    2) logs/coder-api-error.yyyy-MM-dd.N.log : 에러 로그 (ERROR, JSON Lines 한 줄 = 한 건)
+                                     coder-backend 와 같은 형식 (sysmClsCd 02 로 시스템 구분)
+                                     - 일자별 파일 (기간 조회 시 파일명의 일자로 대상 파일 선택)
+                                     - 압축하지 않음, 100MB 초과 시 N 증가 (0, 1, 2 ...)
+
+    로그 폴더는 LOG_PATH(환경변수/시스템속성)로 바꿀 수 있고, 없으면 실행 폴더의 logs/ 에 만든다.
+
+    MDC 키 (TraceIdFilter, ApiClientFilter, SqlIdInterceptor, GlobalExceptionHandler, ApiErrorWriter 가 채움)
+      traceId : 요청 추적 ID (요청·응답 헤더 X-Trace-Id 와 같은 값, 호출 이력 TRC_ID)
+      usrId   : 호출한 연계키ID (KEY_ID)
+      sqlId   : 오류가 난 쿼리 ({매퍼명}.{쿼리ID})
+      errCd   : 에러 코드 (BusinessException 코드 / ErrorCode)
+      uri, method : 요청 URI, HTTP 메서드
+
+    ==개정이력========================================
+    수정일     수정자   Version    내용
+    ========== ======= =========   ===================
+    2026.10.27  ywkim    0.1       최초등록
+-->
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="LOG_DIR" value="${LOG_PATH:-logs}"/>
+    <!-- 시스템유형 (SY003). application.yml coder.log.sysm-cls-cd -->
+    <springProperty scope="context" name="SYSM_CLS_CD" source="coder.log.sysm-cls-cd" defaultValue="02"/>
+    <!-- 앱명: 로그 파일명·에러 로그 appNm (SYLO030 이 coder-api 에러 로그도 읽으려면 coder-backend SystemLogServiceImpl 확장 필요) -->
+    <springProperty scope="context" name="APP_NM" source="spring.application.name" defaultValue="coder-api"/>
+
+    <property name="API_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%t] [%X{traceId:-}|%X{usrId:-}|%X{sqlId:-}|%X{errCd:-}] %logger{36} - %m%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${API_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 전체 로그 (텍스트) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${APP_NM}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${APP_NM}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${API_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!--
+        에러 로그 (JSON Lines) - SYLO030 화면 항목과 1:1 대응
+          logDttm    -> 로그일시 (LOG_DTTM)
+          sysmClsCd  -> 시스템유형 (SYSM_CLS_CD)
+          usrId      -> 사용자ID (USR_ID)   ※ coder-api 는 연계키ID (KEY_ID)
+          errMsg     -> 에러내용 (ERR_MSG)
+          sqlId      -> SQL_ID (SQL_ID)
+          traceId, errCd, uri, method, level, logger, thread, stackTrace -> 상세 팝업
+    -->
+    <appender name="ERROR_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/${APP_NM}-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>90</maxHistory>
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timestampPattern>yyyy-MM-dd HH:mm:ss.SSS</timestampPattern>
+            <fieldNames>
+                <timestamp>logDttm</timestamp>
+                <message>errMsg</message>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <level>level</level>
+                <levelValue>[ignore]</levelValue>
+                <version>[ignore]</version>
+                <stackTrace>stackTrace</stackTrace>
+            </fieldNames>
+            <!-- logback 컨텍스트 속성(SYSM_CLS_CD 등)은 출력하지 않는다 (sysmClsCd 로 따로 출력) -->
+            <includeContext>false</includeContext>
+            <customFields>{"appNm":"${APP_NM}","sysmClsCd":"${SYSM_CLS_CD}"}</customFields>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>usrId</includeMdcKeyName>
+            <includeMdcKeyName>sqlId</includeMdcKeyName>
+            <includeMdcKeyName>errCd</includeMdcKeyName>
+            <includeMdcKeyName>uri</includeMdcKeyName>
+            <includeMdcKeyName>method</includeMdcKeyName>
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>40</maxDepthPerThrowable>
+                <maxLength>8192</maxLength>
+                <rootCauseFirst>true</rootCauseFirst>
+            </throwableConverter>
+        </encoder>
+    </appender>
+
+    <logger name="kr.or.coder" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_JSON"/>
+    </root>
+
+</configuration>

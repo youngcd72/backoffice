@@ -1,12 +1,10 @@
 <template>
   <div class="login-wrapper">
     <aside class="login-brand" aria-label="CODER">
-      <div class="brand-sign">
-        <span class="brand-rule" aria-hidden="true"></span>
-        <span class="brand-plate">CODER</span>
-        <p class="brand-name">CODER 기본 프레임워크</p>
-        <p class="brand-owner">A perfect day for sleeping in</p>
+      <div class="brand-card">
+        <BrandLogo layout="stacked" :size="96" tagline="기본 프레임워크" animated class="brand-card-logo" />
       </div>
+      <p class="brand-owner">A perfect day for sleeping in</p>
     </aside>
 
     <main class="login-main">
@@ -110,7 +108,7 @@
 import { msg } from '@/utils/message';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Button, Input } from '@/components';
+import { BrandLogo, Button, Input } from '@/components';
 import { useAuthStore } from '@/stores/auth';
 import { useDialog } from '@/composables/useDialog';
 
@@ -217,7 +215,7 @@ const handleForgotPassword = () => {
 </script>
 
 <style scoped>
-/* 분할 화면: 왼쪽 pine 표지판 패널 + 오른쪽 폼 */
+/* 분할 화면: 왼쪽 슬레이트 위 명함 + 오른쪽 코튼지 위 폼 */
 .login-wrapper {
   display: flex;
   min-height: 100vh;
@@ -227,56 +225,46 @@ const handleForgotPassword = () => {
   font-family: var(--ds-font);
 }
 
-/* ---------- 왼쪽: 공항 게이트 표지 ---------- */
+/* ---------- 왼쪽: 슬레이트 돌판 위에 놓인 명함 ---------- */
 .login-brand {
-  flex: 0 0 42%;
+  flex: 0 0 46%;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
   padding: 56px;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
   box-sizing: border-box;
 }
 
-.brand-sign {
+/* 명함 비율(90×50mm)의 코튼지 카드. 아래 두 줄의 단단한 띠가 쌓인 명함의 두께다 */
+.brand-card {
+  width: min(440px, 100%);
+  aspect-ratio: 9 / 5;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.brand-rule {
-  display: block;
-  width: 48px;
-  height: 3px;
-  margin-bottom: 16px;
-  background: var(--ds-sign);
-}
-
-.brand-plate {
-  display: inline-flex;
   align-items: center;
-  padding: 8px 18px;
-  font-size: 56px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  line-height: 1;
-  color: var(--ds-sign);
-  background: var(--ds-pine-700);
+  justify-content: center;
+  padding: 0 44px;
+  background: var(--ds-surface);
   border-radius: 2px;
+  box-shadow: 0 3px 0 var(--ds-slate-100), 0 6px 0 var(--ds-rule-strong);
+  color: var(--ds-ink);
+  box-sizing: border-box;
 }
 
-.brand-name {
-  margin: 20px 0 0;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--ds-ink-inverse);
+/* 레터프레스: 먹 선 아래 1px 밝은 턱으로 종이에 눌린 느낌 */
+.brand-card-logo {
+  font-size: 44px;
+  filter: drop-shadow(0 1px 0 var(--ds-surface-muted));
 }
 
 .brand-owner {
-  margin: 6px 0 0;
+  margin: 0;
   font-size: 13px;
-  color: var(--ds-ink-inverse);
-  opacity: 0.65;
+  color: var(--ds-slate-100);
+  opacity: 0.7;
 }
 
 /* ---------- 오른쪽: 폼 패널 ---------- */
@@ -329,7 +317,7 @@ const handleForgotPassword = () => {
   --input-bg-focus: var(--ds-surface);
   --input-border: var(--ds-rule-strong);
   --input-border-hover: var(--ds-rule-strong);
-  --input-border-focus: var(--ds-pine-700);
+  --input-border-focus: var(--ds-slate-700);
   --input-text: var(--ds-ink);
   --input-text-muted: var(--ds-ink-3);
   --input-radius: var(--ds-radius-control);
@@ -357,7 +345,7 @@ const handleForgotPassword = () => {
 
 .login-form :deep(.is-focused .input-control) {
   background: var(--ds-surface);
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
   box-shadow: var(--ds-focus-field);
 }
 
@@ -412,8 +400,8 @@ const handleForgotPassword = () => {
 }
 
 .custom-checkbox:checked {
-  background-color: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background-color: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
 }
 
 .custom-checkbox:checked::after {
@@ -430,7 +418,7 @@ const handleForgotPassword = () => {
 
 .forgot-link,
 .signup-link {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   text-decoration: none;
   border-radius: 2px;
   outline: none;
@@ -468,8 +456,8 @@ const handleForgotPassword = () => {
   height: 40px;
   margin-top: 4px;
   font-weight: 600;
-  background: var(--ds-pine-700);
-  border: 1px solid var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border: 1px solid var(--ds-slate-700);
   border-radius: var(--ds-radius-control);
   color: var(--ds-ink-inverse);
   box-shadow: none;
@@ -478,8 +466,8 @@ const handleForgotPassword = () => {
 }
 
 .login-form :deep(.submit-btn:hover:not(:disabled)) {
-  background: var(--ds-pine-900);
-  border-color: var(--ds-pine-900);
+  background: var(--ds-slate-900);
+  border-color: var(--ds-slate-900);
   transform: none;
   box-shadow: none;
 }
@@ -508,32 +496,35 @@ const handleForgotPassword = () => {
   }
 
   .login-brand {
-    flex: 0 0 120px;
-    height: 120px;
-    padding: 0 16px 16px;
+    flex: none;
+    padding: 24px 16px 30px;
   }
 
-  .brand-sign {
+  .brand-card {
+    width: auto;
+    aspect-ratio: auto;
+    padding: 16px 22px;
+  }
+
+  .brand-card-logo {
+    font-size: 26px;
+  }
+
+  .brand-card-logo :deep(.brand-mark) {
+    width: 44px;
+    height: 41px;
+    stroke-width: 2.6;
+  }
+
+  /* 좁은 화면에서는 심볼 옆에 워드마크를 둔다 */
+  .brand-card-logo.is-stacked {
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
-    column-gap: 12px;
-    row-gap: 4px;
+    gap: 14px;
   }
 
-  .brand-rule,
   .brand-owner {
     display: none;
-  }
-
-  .brand-plate {
-    font-size: 32px;
-    padding: 6px 12px;
-  }
-
-  .brand-name {
-    margin: 0;
-    font-size: 15px;
   }
 
   .login-main {

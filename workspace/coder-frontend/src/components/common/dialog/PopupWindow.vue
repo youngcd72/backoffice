@@ -97,7 +97,7 @@ const toCssSize = (v: number | string) => (typeof v === 'number' ? `${v}px` : v)
   max-width: calc(100vw - 32px);
   max-height: calc(100vh - 32px);
   background: var(--ds-surface);
-  border: 1px solid var(--ds-pine-900);
+  border: 1px solid var(--ds-slate-900);
   border-radius: var(--ds-radius-overlay);
   box-shadow: var(--ds-shadow-overlay);
   overflow: hidden;
@@ -111,7 +111,7 @@ const toCssSize = (v: number | string) => (typeof v === 'number' ? `${v}px` : v)
   flex: none;
   height: 42px;
   padding: 0 8px 0 16px;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
 }
 .popup-title {
@@ -129,7 +129,7 @@ const toCssSize = (v: number | string) => (typeof v === 'number' ? `${v}px` : v)
   transition: background-color var(--ds-ease);
 }
 .popup-close:hover {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
 }
 .popup-close:focus-visible {
   outline: none;
@@ -146,7 +146,7 @@ const toCssSize = (v: number | string) => (typeof v === 'number' ? `${v}px` : v)
   gap: 8px;
   flex: none;
   padding: 12px 18px;
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-top: 1px solid var(--ds-rule);
 }
 .popup-fade-enter-active,

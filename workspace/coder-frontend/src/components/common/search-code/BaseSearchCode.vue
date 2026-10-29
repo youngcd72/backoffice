@@ -185,11 +185,11 @@ defineExpose({
   --cs-height: var(--ds-control-height);
   --cs-border: var(--ds-rule-strong);
   --cs-border-hover: var(--ds-ink-3);
-  --cs-border-focus: var(--ds-pine-700);
+  --cs-border-focus: var(--ds-slate-700);
   --cs-bg: var(--ds-surface);
   --cs-bg-readonly: var(--ds-surface-muted);
   --cs-btn-bg: var(--ds-surface);
-  --cs-btn-bg-hover: var(--ds-pine-050);
+  --cs-btn-bg-hover: var(--ds-slate-050);
   --cs-text: var(--ds-ink);
   --cs-text-muted: var(--ds-ink-3);
 
@@ -272,7 +272,7 @@ defineExpose({
 
 .search-code-btn:hover:not(:disabled) {
   background: var(--cs-btn-bg-hover);
-  border-color: var(--ds-pine-700);
+  border-color: var(--ds-slate-700);
 }
 
 .search-code-btn:focus-visible {

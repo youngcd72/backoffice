@@ -1,0 +1,80 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'kr.or.coder.api'
+version = '1.0.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
+    }
+    dependencies {
+        dependency 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+        dependency 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    }
+}
+
+dependencies {
+    // CODER Core Base Libraries (Included from ../coder-core via Composite Build)
+    implementation 'kr.or.coder.core:coder-core-common'
+    implementation 'kr.or.coder.core:coder-core-db'
+    implementation 'kr.or.coder.core:coder-core-redis'
+    implementation 'kr.or.coder.core:coder-core-security'
+    implementation 'kr.or.coder.core:coder-core-kms'
+
+    // Spring Boot Actuator for health check
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // 에러 로그 JSON Lines 출력 (logs/coder-api-error.log, SYLO030 시스템로그관리 원천)
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+
+    // Database Drivers
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootRun {
+    jvmArgs = ['-Duser.timezone=Asia/Seoul', '-Dfile.encoding=UTF-8']
+}
+
+// 단위 테스트: DB·Redis 없이 실행 가능한 테스트만 수행
+tasks.named('test') {
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+// 통합 테스트: PostgreSQL(TB_LNK_*, TB_INFC_* 테이블 생성 완료)과 Redis 필요
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests that require PostgreSQL and Redis.'
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    shouldRunAfter tasks.named('test')
+}

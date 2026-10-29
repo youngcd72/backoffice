@@ -151,7 +151,7 @@ watch(
   width: 380px;
   max-width: calc(100vw - 32px);
   background: var(--ds-surface);
-  border: 1px solid var(--ds-pine-900);
+  border: 1px solid var(--ds-slate-900);
   border-radius: var(--ds-radius-overlay);
   box-shadow: var(--ds-shadow-overlay);
   overflow: hidden;
@@ -165,7 +165,7 @@ watch(
   justify-content: space-between;
   height: 42px;
   padding: 0 8px 0 16px;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
 }
 /* 오류·경고 대화상자만 헤더 하단 선으로 구분 (안내 메시지에는 표시하지 않는다) */
@@ -173,7 +173,7 @@ watch(
   box-shadow: inset 0 -3px 0 var(--ds-stamp);
 }
 .dialog.icon-warning .dialog-header {
-  box-shadow: inset 0 -3px 0 var(--ds-sign);
+  box-shadow: inset 0 -3px 0 var(--ds-foil);
 }
 .dialog-title {
   font-size: 14px;
@@ -190,7 +190,7 @@ watch(
   transition: background-color var(--ds-ease);
 }
 .dialog-close:hover {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
 }
 .dialog-close:focus-visible {
   outline: none;
@@ -215,12 +215,12 @@ watch(
   font-weight: 700;
   line-height: 1;
   color: var(--ds-ink-inverse);
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   border-radius: 2px;
 }
 .dialog-icon.is-warning {
-  color: var(--ds-pine-900);
-  background: var(--ds-sign);
+  color: var(--ds-slate-900);
+  background: var(--ds-foil);
 }
 .dialog-icon.is-error {
   background: var(--ds-stamp);
@@ -239,7 +239,7 @@ watch(
   justify-content: center;
   gap: 8px;
   padding: 12px 18px;
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-top: 1px solid var(--ds-rule);
 }
 .dialog-btn {
@@ -257,19 +257,19 @@ watch(
   transition: background-color var(--ds-ease), border-color var(--ds-ease), color var(--ds-ease);
 }
 .dialog-btn:hover {
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
+  color: var(--ds-slate-900);
 }
 /* 첫 번째 버튼 = 확인 */
 .dialog-btn:first-child {
-  background: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 .dialog-btn:first-child:hover {
-  background: var(--ds-pine-900);
-  border-color: var(--ds-pine-900);
+  background: var(--ds-slate-900);
+  border-color: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
 }
 .dialog-btn:focus-visible {

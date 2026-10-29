@@ -177,16 +177,16 @@ watch(
   cursor: pointer;
   transition: color var(--ds-ease);
 }
-.mdi-home-btn:hover { color: var(--ds-pine-700); }
+.mdi-home-btn:hover { color: var(--ds-slate-700); }
 /* 활성 탭은 탭 바 아래 괘선 위에 선다 (본문 바탕이 ground 라 괘선을 덮어 잇지 않는다) */
 .mdi-home-btn.active {
   height: 32px;
   width: 40px;
   margin-bottom: 0;
   border-radius: 0;
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
   background: var(--ds-surface);
-  box-shadow: inset 0 3px 0 var(--ds-sign);
+  box-shadow: inset 0 3px 0 var(--ds-foil);
 }
 
 .mdi-tab-scroller {
@@ -216,12 +216,12 @@ watch(
   box-sizing: border-box;
   transition: background-color var(--ds-ease), color var(--ds-ease);
 }
-.mdi-tab:hover { background: var(--ds-pine-050); color: var(--ds-ink); }
+.mdi-tab:hover { background: var(--ds-slate-050); color: var(--ds-ink); }
 .mdi-tab.active {
   font-weight: 600;
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
   background: var(--ds-surface);
-  box-shadow: inset 0 3px 0 var(--ds-sign);
+  box-shadow: inset 0 3px 0 var(--ds-foil);
 }
 
 .mdi-tab-label {
@@ -270,7 +270,7 @@ watch(
   transition: background-color var(--ds-ease), border-color var(--ds-ease), color var(--ds-ease);
 }
 .mdi-nav-btn:hover {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-color: var(--ds-rule-strong);
   color: var(--ds-ink);
 }

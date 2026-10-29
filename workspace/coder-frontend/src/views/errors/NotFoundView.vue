@@ -60,13 +60,14 @@ const router = useRouter()
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--ds-font-brand);
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  color: var(--ds-sign);
-  background: var(--ds-pine-900);
+  color: var(--ds-foil);
+  background: var(--ds-slate-900);
   border-radius: 2px;
 }
 

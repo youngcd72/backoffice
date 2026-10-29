@@ -295,7 +295,7 @@ onBeforeUnmount(() => {
   --select-bg: var(--ds-surface);
   --select-border: var(--ds-rule-strong);
   --select-border-hover: var(--ds-ink-3);
-  --select-border-focus: var(--ds-pine-700);
+  --select-border-focus: var(--ds-slate-700);
   --select-text: var(--ds-ink);
   --select-text-muted: var(--ds-ink-3);
   --select-menu-bg: var(--ds-surface);
@@ -446,13 +446,13 @@ onBeforeUnmount(() => {
 }
 
 .option-item:hover:not(.is-disabled) {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .option-item.is-selected,
 .option-item.is-selected:hover:not(.is-disabled) {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-900);
   font-weight: 600;
 }
 
@@ -462,7 +462,7 @@ onBeforeUnmount(() => {
 }
 
 .check-icon {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
 }
 
 .select-empty {

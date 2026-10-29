@@ -136,7 +136,7 @@ function toYn(event: Event): string {
 
 /* 건수는 오류가 아니므로 브랜드 색 */
 .total-count {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-variant-numeric: tabular-nums;
 }
 
@@ -149,7 +149,7 @@ function toYn(event: Event): string {
 .cell-check {
   width: 16px;
   height: 16px;
-  accent-color: var(--ds-pine-700);
+  accent-color: var(--ds-slate-700);
   cursor: pointer;
 }
 

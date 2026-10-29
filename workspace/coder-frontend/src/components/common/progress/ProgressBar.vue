@@ -208,7 +208,7 @@ const fillStyle = computed(() => {
 /* 프로그레스 바 채우기 (Fill) */
 .progress-bar-fill {
   height: 100%;
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   transition: width 0.4s ease;
   position: relative;
   display: flex;
@@ -232,11 +232,11 @@ const fillStyle = computed(() => {
 .variant-primary,
 .variant-success,
 .variant-gradient {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
 }
 
 .variant-info {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
 }
 
 .variant-warning {

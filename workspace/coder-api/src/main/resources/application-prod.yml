@@ -1,0 +1,28 @@
+# -------------------------------------------------------------------
+# prod - 운영 서버
+#   DB 접속 정보는 기본값 없이 환경변수로만 받는다 (누락 시 기동 실패).
+#   KMS 는 운영 KMS 구현체가 필요하다 (local 은 기동 거부, PRD 13장 #3).
+#   Swagger UI 와 API 문서는 끄고, 스펙 파일은 dev 에서 만들어 연계기관에 전달한다.
+#   JVM 옵션 -Duser.timezone=Asia/Seoul 을 함께 지정한다.
+# -------------------------------------------------------------------
+spring:
+  datasource:
+    hikari:
+      jdbc-url: ${CODER_API_DB_URL}
+      username: ${CODER_API_DB_USERNAME}
+      password: ${CODER_API_DB_PASSWORD}
+
+coder:
+  swagger:
+    enabled: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+management:
+  endpoint:
+    health:
+      show-details: never

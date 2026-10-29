@@ -1257,9 +1257,9 @@ onMounted(async () => {
 }
 
 .cell-button:hover {
-  color: var(--ds-pine-900);
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
+  color: var(--ds-slate-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
 }
 
 .cell-button:focus-visible {
@@ -1295,9 +1295,9 @@ onMounted(async () => {
   border-radius: 2px;
 }
 
-.stat-end { color: var(--ds-pine-700); background: var(--ds-pine-100); }
+.stat-end { color: var(--ds-slate-700); background: var(--ds-slate-100); }
 .stat-error { color: var(--ds-stamp);    background: var(--ds-stamp-tint); }
-.stat-run { color: var(--ds-pine-500); background: var(--ds-pine-050); }
+.stat-run { color: var(--ds-slate-500); background: var(--ds-slate-050); }
 .stat-wait { color: var(--ds-ink-3);    background: var(--ds-surface-muted); }
 
 .dtl-toolbar {
@@ -1353,7 +1353,7 @@ onMounted(async () => {
   font-weight: 600;
   text-align: left;
   color: var(--ds-ink-2);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   border-bottom: 1px solid var(--ds-rule);
 }
 

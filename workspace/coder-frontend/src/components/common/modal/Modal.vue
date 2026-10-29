@@ -207,7 +207,7 @@ onBeforeUnmount(() => {
 
 .modal-container {
   background: var(--ds-surface);
-  border: 1px solid var(--ds-pine-900);
+  border: 1px solid var(--ds-slate-900);
   border-radius: var(--ds-radius-overlay);
   box-shadow: var(--ds-shadow-overlay);
   color: var(--ds-ink);
@@ -236,7 +236,7 @@ onBeforeUnmount(() => {
   flex: none;
   height: 42px;
   padding: 0 8px 0 16px;
-  background: var(--ds-pine-900);
+  background: var(--ds-slate-900);
   color: var(--ds-ink-inverse);
 }
 
@@ -261,7 +261,7 @@ onBeforeUnmount(() => {
 }
 
 .modal-close-btn:hover {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
 }
 
 .modal-close-btn:focus-visible {
@@ -287,7 +287,7 @@ onBeforeUnmount(() => {
   flex: none;
   padding: 12px 18px;
   border-top: 1px solid var(--ds-rule);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .footer-btn {
@@ -316,19 +316,19 @@ onBeforeUnmount(() => {
   border-color: var(--ds-rule-strong);
 }
 .cancel-btn:hover {
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
+  color: var(--ds-slate-900);
 }
 
 .confirm-btn {
-  background: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 .confirm-btn:hover:not(:disabled) {
-  background: var(--ds-pine-900);
-  border-color: var(--ds-pine-900);
+  background: var(--ds-slate-900);
+  border-color: var(--ds-slate-900);
 }
 .confirm-btn:disabled {
   background: var(--ds-surface-muted);
@@ -341,7 +341,7 @@ onBeforeUnmount(() => {
   width: 14px;
   height: 14px;
   border: 2px solid var(--ds-rule);
-  border-top-color: var(--ds-pine-700);
+  border-top-color: var(--ds-slate-700);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }

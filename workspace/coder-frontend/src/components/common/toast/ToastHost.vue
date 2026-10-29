@@ -74,7 +74,7 @@ const onBtnCloseClick = (id: number) => removeToast(id);
 }
 
 .toast {
-  --toast-accent: var(--ds-pine-700);
+  --toast-accent: var(--ds-slate-700);
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -89,8 +89,8 @@ const onBtnCloseClick = (id: number) => removeToast(id);
   pointer-events: auto;
 }
 
-.toast--success { --toast-accent: var(--ds-pine-500); }
-.toast--info    { --toast-accent: var(--ds-pine-700); }
+.toast--success { --toast-accent: var(--ds-slate-500); }
+.toast--info    { --toast-accent: var(--ds-slate-700); }
 .toast--warning { --toast-accent: var(--ds-ochre); }
 .toast--error   { --toast-accent: var(--ds-stamp); }
 

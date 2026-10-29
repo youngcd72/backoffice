@@ -207,8 +207,8 @@ const handleKeyNavigation = (e) => {
   flex-direction: column;
   width: 100%;
   font-family: inherit;
-  --tab-primary: var(--ds-pine-700);
-  --tab-active-text: var(--ds-pine-900);
+  --tab-primary: var(--ds-slate-700);
+  --tab-active-text: var(--ds-slate-900);
   --tab-text: var(--ds-ink-2);
   --tab-hover-text: var(--ds-ink);
   --tab-border: var(--ds-rule-strong);
@@ -276,7 +276,7 @@ const handleKeyNavigation = (e) => {
 
 .tab-nav-item:hover:not(.is-disabled):not(.is-active) {
   color: var(--tab-hover-text);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .tab-nav-item:focus-visible {
@@ -311,8 +311,8 @@ const handleKeyNavigation = (e) => {
 }
 
 .badge-primary {
-  background: var(--ds-pine-100);
-  color: var(--ds-pine-700);
+  background: var(--ds-slate-100);
+  color: var(--ds-slate-700);
 }
 
 .badge-danger {
@@ -321,12 +321,12 @@ const handleKeyNavigation = (e) => {
 }
 
 .badge-success {
-  background: var(--ds-pine-050);
-  color: var(--ds-pine-500);
+  background: var(--ds-slate-050);
+  color: var(--ds-slate-500);
 }
 
 /* ============================================================
-   1. Variant: Line (하단 사인 옐로 바 - 기본형)
+   1. Variant: Line (하단 포일 바 - 기본형)
 ============================================================ */
 .variant-line .tabs-header-bar {
   border-bottom: 1px solid var(--tab-border);
@@ -336,11 +336,11 @@ const handleKeyNavigation = (e) => {
   background: var(--ds-surface);
   color: var(--tab-active-text);
   font-weight: 600;
-  box-shadow: inset 0 -3px 0 var(--ds-sign);
+  box-shadow: inset 0 -3px 0 var(--ds-foil);
 }
 
 .variant-line .tab-nav-item.is-active:focus-visible {
-  box-shadow: inset 0 -3px 0 var(--ds-sign), var(--ds-focus);
+  box-shadow: inset 0 -3px 0 var(--ds-foil), var(--ds-focus);
 }
 
 /* ============================================================
@@ -363,13 +363,13 @@ const handleKeyNavigation = (e) => {
 }
 
 .variant-pill .tab-nav-item.is-active {
-  background: var(--ds-pine-700);
+  background: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
   font-weight: 600;
 }
 
 /* ============================================================
-   3. Variant: Card (폴더 탭 형태 - 상단 사인 옐로 바)
+   3. Variant: Card (폴더 탭 형태 - 상단 포일 바)
 ============================================================ */
 .variant-card .tabs-header-bar {
   border-bottom: 1px solid var(--tab-border);
@@ -388,11 +388,11 @@ const handleKeyNavigation = (e) => {
   border-color: var(--tab-border);
   color: var(--tab-active-text);
   font-weight: 600;
-  box-shadow: inset 0 3px 0 var(--ds-sign);
+  box-shadow: inset 0 3px 0 var(--ds-foil);
 }
 
 .variant-card .tab-nav-item.is-active:focus-visible {
-  box-shadow: inset 0 3px 0 var(--ds-sign), var(--ds-focus);
+  box-shadow: inset 0 3px 0 var(--ds-foil), var(--ds-focus);
 }
 
 /* 탭 바디 영역 */

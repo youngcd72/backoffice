@@ -153,14 +153,14 @@ const handleClick = (e) => {
 /* 색상 테마별 변형 */
 .btn-primary,
 .btn-success {
-  background: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 .btn-primary:hover:not(.is-disabled),
 .btn-success:hover:not(.is-disabled) {
-  background: var(--ds-pine-900);
-  border-color: var(--ds-pine-900);
+  background: var(--ds-slate-900);
+  border-color: var(--ds-slate-900);
 }
 
 .btn-secondary,
@@ -171,9 +171,9 @@ const handleClick = (e) => {
 }
 .btn-secondary:hover:not(.is-disabled),
 .btn-outline:hover:not(.is-disabled) {
-  background: var(--ds-pine-050);
-  border-color: var(--ds-pine-700);
-  color: var(--ds-pine-900);
+  background: var(--ds-slate-050);
+  border-color: var(--ds-slate-700);
+  color: var(--ds-slate-900);
 }
 
 .btn-danger {
@@ -192,7 +192,7 @@ const handleClick = (e) => {
   color: var(--ds-ochre);
 }
 .btn-warning:hover:not(.is-disabled) {
-  background: var(--ds-sign-tint);
+  background: var(--ds-foil-tint);
 }
 
 .btn-ghost {
@@ -201,7 +201,7 @@ const handleClick = (e) => {
   color: var(--ds-ink-2);
 }
 .btn-ghost:hover:not(.is-disabled) {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   color: var(--ds-ink);
 }
 

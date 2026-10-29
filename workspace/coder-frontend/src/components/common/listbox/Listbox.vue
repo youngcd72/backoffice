@@ -349,10 +349,10 @@ const handleKeyDown = (e) => {
   font-family: inherit;
   user-select: none;
   --lb-bg: var(--ds-surface);
-  --lb-item-hover: var(--ds-pine-050);
-  --lb-item-active: var(--ds-pine-100);
+  --lb-item-hover: var(--ds-slate-050);
+  --lb-item-active: var(--ds-slate-100);
   --lb-border: var(--ds-rule-strong);
-  --lb-border-focus: var(--ds-pine-700);
+  --lb-border-focus: var(--ds-slate-700);
   --lb-text: var(--ds-ink);
   --lb-text-muted: var(--ds-ink-3);
   --lb-radius: var(--ds-radius-panel);
@@ -383,7 +383,7 @@ const handleKeyDown = (e) => {
 }
 
 .selected-num {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-weight: 600;
 }
 
@@ -460,7 +460,7 @@ const handleKeyDown = (e) => {
 .toolbar-btn {
   background: none;
   border: none;
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   font-size: 12px;
   font-weight: 600;
   font-family: inherit;
@@ -471,7 +471,7 @@ const handleKeyDown = (e) => {
 }
 
 .toolbar-btn:hover:not(:disabled) {
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
   text-decoration: underline;
 }
 
@@ -532,12 +532,12 @@ const handleKeyDown = (e) => {
 .listbox-item.is-selected,
 .listbox-item.is-selected:hover:not(.is-disabled) {
   background: var(--lb-item-active);
-  color: var(--ds-pine-900);
+  color: var(--ds-slate-900);
   font-weight: 600;
 }
 
 .listbox-item.is-focused {
-  box-shadow: inset 3px 0 0 var(--ds-sign);
+  box-shadow: inset 3px 0 0 var(--ds-foil);
 }
 
 .listbox-item.is-disabled {
@@ -560,8 +560,8 @@ const handleKeyDown = (e) => {
 }
 
 .item-checkbox.checked {
-  background: var(--ds-pine-700);
-  border-color: var(--ds-pine-700);
+  background: var(--ds-slate-700);
+  border-color: var(--ds-slate-700);
   color: var(--ds-ink-inverse);
 }
 
@@ -594,7 +594,7 @@ const handleKeyDown = (e) => {
 }
 
 .check-mark {
-  color: var(--ds-pine-700);
+  color: var(--ds-slate-700);
   display: flex;
   align-items: center;
   flex-shrink: 0;

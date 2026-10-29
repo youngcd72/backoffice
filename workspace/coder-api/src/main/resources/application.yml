@@ -1,0 +1,126 @@
+server:
+  port: 8082
+  shutdown: graceful
+
+spring:
+  application:
+    name: coder-api
+
+  # 프로필 미지정 시 local (application-{local|dev|prod}.yml)
+  #   실행: SPRING_PROFILES_ACTIVE=dev  또는  --spring.profiles.active=prod
+  profiles:
+    default: local
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  # -------------------------------------------------------------------
+  # Database Configuration (PostgreSQL) - coder-core-db DataSourceConfig
+  #   접속 정보(jdbc-url / username / password)는 프로필별 파일에 둔다.
+  #   DB 계정은 coder-backend 와 같은 coder 계정을 쓴다 (전용 계정 분리는 PRD 13장 #6)
+  # -------------------------------------------------------------------
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 3000         # 대외 응답 지연을 막기 위해 커넥션 대기는 짧게 둔다
+
+# -------------------------------------------------------------------
+# CODER Framework Configurations
+# -------------------------------------------------------------------
+coder:
+  # 로그 (logback-spring.xml) - 에러 로그(JSON)의 시스템유형 (SY / SYSM_CLS_CD: 02 대외계)
+  log:
+    sysm-cls-cd: "02"
+
+  mybatis:
+    mapper-locations: classpath*:mapper/**/*.xml
+    type-aliases-package: kr.or.coder.core.db.model
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    use-generated-keys: true
+    default-statement-timeout: 10
+
+  # Redis (coder-core-redis) - 호출 한도 카운터, 비밀키 실패 잠금, 연계 정보 캐시 삭제 채널
+  redis:
+    host: ${CODER_REDIS_HOST:localhost}
+    port: ${CODER_REDIS_PORT:6379}
+    timeout: 1000
+    session:
+      enabled: false
+
+  # coder-core-security 의 사용자 JWT(HS256) 보안 설정은 끄고 coder-api SecurityConfig(KMS RS256)를 쓴다
+  security:
+    enabled: false
+
+  # KMS (coder-core-kms) - 클라이언트 비밀키 암·복호화, 토큰 서명
+  #   local 은 개발·테스트 전용 (prod 프로필에서는 기동 거부). 운영 KMS 제품은 PRD 13장 #3
+  kms:
+    provider: local
+
+  # 메시지 번들 (coder-api 자체 번들, 외부 응답 기본 언어 영어 - PRD 13장 #8)
+  message:
+    basename: messages/messages
+    encoding: UTF-8
+    default-locale: en
+    cache-seconds: 3600
+
+  # Swagger & OpenAPI Documentation (coder-core-security SwaggerConfig)
+  swagger:
+    enabled: true
+    title: CODER API
+    description: CODER external integration REST API (OAuth2 Client Credentials, Bearer JWT)
+    version: v1.0.0
+    oauth2:
+      enabled: false
+
+  # 대외 연계 API (kr.or.coder.api.common.config.ApiProperties)
+  api:
+    system-user-id: API                      # 이력 테이블 FIRS_REGR_ID
+    biz-base-package: kr.or.coder.api.biz    # @ApiInterface 선언을 강제하는 업무 API 패키지
+    token:
+      issuer: coder-api
+      expires-in: 3600                       # 액세스 토큰 만료 (초)
+      signing-key-id: coder-api-token        # KMS 서명키 ID (RS256)
+      client-secret-kek-id: coder-api-client-secret
+      max-secret-fail-count: 5               # 비밀키 연속 실패 시 잠금 횟수 (PRD 13장 #5)
+      secret-fail-lock-minutes: 10           # 잠금 시간 (분)
+    trusted-proxies: []                      # X-Forwarded-For 를 믿을 프록시 IP/CIDR (L4/LB 주소)
+    rate-limit:
+      redis-failure-mode: allow              # Redis 장애 시 allow(허용) / deny(503 거부) - PRD 13장 #4
+      simu-ttl-seconds: 60
+    call-log:
+      queue-capacity: 10000
+      batch-size: 500
+      flush-interval-ms: 1000
+      body-max-length: 4000
+    cache:
+      ttl-seconds: 300
+      evict-channel: "coder:api:cache-evict"
+
+# -------------------------------------------------------------------
+# SpringDoc - 연계기관 공유용 스펙 그룹 (토큰 발급 + 업무 API)
+# -------------------------------------------------------------------
+springdoc:
+  group-configs:
+    - group: partner
+      paths-to-match:
+        - /oauth2/token
+        - /api/v1/**
+    - group: all
+      paths-to-match:
+        - /**
+
+# -------------------------------------------------------------------
+# Spring Boot Actuator Management (health 만 공개, 내부망에서만 접근하도록 LB/방화벽에서 제한)
+# -------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always

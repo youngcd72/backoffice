@@ -233,14 +233,14 @@ onUnmounted(() => {
   border: none;
   border-radius: var(--ds-radius-control);
   background: transparent;
-  color: var(--ds-pine-100);
+  color: var(--ds-slate-100);
   cursor: pointer;
   transition: background-color var(--ds-ease), color var(--ds-ease);
 }
 
 .alarm-btn:hover,
 .alarm-btn.open {
-  background: var(--ds-pine-500);
+  background: var(--ds-slate-500);
   color: var(--ds-ink-inverse);
 }
 
@@ -260,7 +260,7 @@ onUnmounted(() => {
   line-height: 15px;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  box-shadow: 0 0 0 1.5px var(--ds-pine-700);
+  box-shadow: 0 0 0 1.5px var(--ds-slate-700);
 }
 
 .alarm-panel {
@@ -305,14 +305,14 @@ onUnmounted(() => {
   border: none;
   border-radius: var(--ds-radius-control);
   background: transparent;
-  color: var(--ds-pine-500);
+  color: var(--ds-slate-500);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .alarm-cfm-all-btn:hover:not(:disabled) {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 
 .alarm-cfm-all-btn:disabled {
@@ -341,7 +341,7 @@ onUnmounted(() => {
 
 .alarm-item:hover,
 .alarm-item:focus-visible {
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
   outline: none;
 }
 
@@ -367,7 +367,7 @@ onUnmounted(() => {
 .alarm-type {
   font-size: 11px;
   font-weight: 600;
-  color: var(--ds-pine-500);
+  color: var(--ds-slate-500);
 }
 
 .alarm-time {

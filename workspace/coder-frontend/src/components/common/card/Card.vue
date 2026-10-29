@@ -133,6 +133,6 @@ defineProps({
 .card-footer {
   padding: 10px 16px;
   border-top: 1px solid var(--ds-rule);
-  background: var(--ds-pine-050);
+  background: var(--ds-slate-050);
 }
 </style>
