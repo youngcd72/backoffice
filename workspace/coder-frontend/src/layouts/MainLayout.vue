@@ -4,7 +4,7 @@
     <div class="top-bar">
       <div class="brand" @click="handleBrandClick">
         <BrandLogo :size="20" class="brand-title" />
-        <span class="brand-subtitle">기본 프레임워크</span>
+        <span class="brand-subtitle">Freshly brewed code</span>
       </div>
 
       <div class="top-bar-right">
@@ -225,7 +225,7 @@
       </div>
 
       <div class="footer-center">
-        <span class="system-notice">CODER 기본 프레임워크</span>
+        <span class="system-notice">CODER Freshly brewed code</span>
       </div>
 
       <div class="footer-right">

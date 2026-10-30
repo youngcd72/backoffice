@@ -2,9 +2,8 @@
   <div class="login-wrapper">
     <aside class="login-brand" aria-label="CODER">
       <div class="brand-card">
-        <BrandLogo layout="stacked" :size="96" tagline="기본 프레임워크" animated class="brand-card-logo" />
+        <BrandLogo layout="stacked" :size="96" tagline="Freshly brewed code" animated class="brand-card-logo" />
       </div>
-      <p class="brand-owner">A perfect day for sleeping in</p>
     </aside>
 
     <main class="login-main">
@@ -258,13 +257,6 @@ const handleForgotPassword = () => {
 .brand-card-logo {
   font-size: 44px;
   filter: drop-shadow(0 1px 0 var(--ds-surface-muted));
-}
-
-.brand-owner {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ds-slate-100);
-  opacity: 0.7;
 }
 
 /* ---------- 오른쪽: 폼 패널 ---------- */
@@ -521,10 +513,6 @@ const handleForgotPassword = () => {
     flex-direction: row;
     align-items: center;
     gap: 14px;
-  }
-
-  .brand-owner {
-    display: none;
   }
 
   .login-main {
