@@ -64,6 +64,17 @@ INSERT INTO TB_PRGM_CMPN_M (
     -- SYLO030 시스템로그관리 (views/system/logs/SystemLogManageView.vue)
     ('SYLO030', 'btnXlsDnld',       '엑셀',                   1, 'Y', 'admin', 'admin'),
     ('SYLO030', 'btnSrch',          '조회',                   2, 'Y', 'admin', 'admin'),
+    -- SYLK010 API관리 (views/system/links/ApiManageView.vue + api/*Tab.vue)
+    --   팝업 안 버튼(키 발급 실행, 키 저장, 발급 결과 확인)은 등록하지 않는다. 키 관리 팝업 저장은 btnKeyIssu 권한을 따른다
+    ('SYLK010', 'btnOrgSrch',       '연계기관 조회',          1, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnOrgNew',        '연계기관 신규',          2, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnOrgSave',       '연계기관 저장',          3, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnKeyIssu',       '키발급',                 4, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnOrgInfcSave',   '허용 인터페이스 저장',   5, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnInfcSrch',      '인터페이스 조회',        6, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnInfcNew',       '인터페이스 신규',        7, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnInfcSave',      '인터페이스 저장',        8, 'Y', 'admin', 'admin'),
+    ('SYLK010', 'btnCallSrch',      '호출이력 조회',          9, 'Y', 'admin', 'admin'),
     -- SYLK050 배치관리 (views/system/links/BatchManageView.vue)
     --   팝업 안 버튼(실행내역 조회, 실행, 배치 저장, 스케줄 일시정지 등)은 등록하지 않는다 (화면 버튼만 권한 제어)
     ('SYLK050', 'btnJobReg',        '배치등록',               1, 'Y', 'admin', 'admin'),

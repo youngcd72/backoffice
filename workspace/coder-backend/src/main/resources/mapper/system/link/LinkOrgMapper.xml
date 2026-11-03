@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : LinkOrgMapper.xml
+    Description   : SYLK010 API관리 연계기관·기관별 허용 인터페이스 MyBatis Mapper (TB_LNK_ORG_M, TB_LNK_ORG_INFC_R)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.11.03  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.link.mapper.LinkOrgMapper">
+
+    <!--
+           조회 조건에 맞는 연계기관 목록을 기관ID 순으로 조회 (사용 가능 키 수 포함)
+           작성자 : ywkim
+      -->
+    <select id="selectLinkOrgList" resultType="kr.or.coder.biz.system.link.dto.LinkOrgResponse">
+        /* LinkOrgMapper.selectLinkOrgList 조회 조건에 맞는 연계기관 목록을 기관ID 순으로 조회 (사용 가능 키 수 포함) */
+        SELECT O.LNK_ORG_ID,
+               O.LNK_ORG_NM,
+               O.CHNL_CLS_CD,
+               O.USE_ST_DT,
+               O.USE_END_DT,
+               O.USE_YN,
+               O.RMK,
+               (SELECT COUNT(*)
+                  FROM TB_LNK_KEY_M K
+                 WHERE K.LNK_ORG_ID = O.LNK_ORG_ID
+                   AND K.KEY_STAT_CD = '01'
+                   AND (K.EXPI_DTTM IS NULL OR K.EXPI_DTTM > CURRENT_TIMESTAMP)) AS USE_KEY_CNT
+        FROM TB_LNK_ORG_M O
+        <where>
+            <if test="keyword != null and keyword.trim() != ''">
+                AND (UPPER(O.LNK_ORG_ID) LIKE '%' || UPPER(TRIM(#{keyword})) || '%'
+                     OR UPPER(O.LNK_ORG_NM) LIKE '%' || UPPER(TRIM(#{keyword})) || '%')
+            </if>
+            <if test="chnlClsCd != null and chnlClsCd != ''">
+                AND O.CHNL_CLS_CD = #{chnlClsCd}
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND O.USE_YN = #{useYn}
+            </if>
+        </where>
+        ORDER BY O.LNK_ORG_ID
+    </select>
+
+    <!--
+           연계기관 1건을 조회
+           작성자 : ywkim
+      -->
+    <select id="selectLinkOrg" resultType="kr.or.coder.biz.system.link.dto.LinkOrgResponse">
+        /* LinkOrgMapper.selectLinkOrg 연계기관 1건을 조회 */
+        SELECT LNK_ORG_ID,
+               LNK_ORG_NM,
+               CHNL_CLS_CD,
+               USE_ST_DT,
+               USE_END_DT,
+               USE_YN,
+               RMK
+        FROM TB_LNK_ORG_M
+        WHERE LNK_ORG_ID = #{lnkOrgId}
+    </select>
+
+    <!--
+           연계기관ID가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsLinkOrg" resultType="boolean">
+        /* LinkOrgMapper.existsLinkOrg 연계기관ID가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_LNK_ORG_M WHERE LNK_ORG_ID = #{lnkOrgId})
+    </select>
+
+    <!--
+           연계기관을 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertLinkOrg">
+        /* LinkOrgMapper.insertLinkOrg 연계기관을 등록 */
+        INSERT INTO TB_LNK_ORG_M (
+            LNK_ORG_ID, LNK_ORG_NM, CHNL_CLS_CD, USE_ST_DT, USE_END_DT, USE_YN, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.lnkOrgId}, #{item.lnkOrgNm}, #{item.chnlClsCd}, NULLIF(#{item.useStDt}, ''), NULLIF(#{item.useEndDt}, ''),
+            #{item.useYn}, NULLIF(#{item.rmk}, ''),
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           연계기관을 수정
+           작성자 : ywkim
+      -->
+    <update id="updateLinkOrg">
+        /* LinkOrgMapper.updateLinkOrg 연계기관을 수정 */
+        UPDATE TB_LNK_ORG_M
+           SET LNK_ORG_NM   = #{item.lnkOrgNm},
+               CHNL_CLS_CD  = #{item.chnlClsCd},
+               USE_ST_DT    = NULLIF(#{item.useStDt}, ''),
+               USE_END_DT   = NULLIF(#{item.useEndDt}, ''),
+               USE_YN       = #{item.useYn},
+               RMK          = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID = #{usrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE LNK_ORG_ID = #{item.lnkOrgId}
+    </update>
+
+    <!--
+           전체 인터페이스를 인터페이스ID 순으로 조회하고 연계기관의 허용 여부를 붙인다
+           작성자 : ywkim
+      -->
+    <select id="selectLinkOrgInterfaceList" resultType="kr.or.coder.biz.system.link.dto.LinkOrgInterfaceResponse">
+        /* LinkOrgMapper.selectLinkOrgInterfaceList 전체 인터페이스를 인터페이스ID 순으로 조회하고 연계기관의 허용 여부를 붙인다 */
+        SELECT I.INFC_ID,
+               I.INFC_NM,
+               I.HTTP_METH_NM,
+               I.URL,
+               I.USE_YN                  AS INFC_USE_YN,
+               COALESCE(R.USE_YN, 'N')   AS ALLW_YN
+        FROM TB_INFC_M I
+        LEFT JOIN TB_LNK_ORG_INFC_R R
+               ON R.INFC_ID = I.INFC_ID
+              AND R.LNK_ORG_ID = #{lnkOrgId}
+        ORDER BY I.INFC_ID
+    </select>
+
+    <!--
+           연계기관에 인터페이스를 허용 (관계가 없으면 등록, 있으면 사용여부를 Y로 수정)
+           작성자 : ywkim
+      -->
+    <insert id="insertLinkOrgInterface">
+        /* LinkOrgMapper.insertLinkOrgInterface 연계기관에 인터페이스를 허용 (관계가 없으면 등록, 있으면 사용여부를 Y로 수정) */
+        INSERT INTO TB_LNK_ORG_INFC_R (
+            LNK_ORG_ID, INFC_ID, USE_YN,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{lnkOrgId}, #{infcId}, 'Y',
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (LNK_ORG_ID, INFC_ID) DO UPDATE
+           SET USE_YN       = 'Y',
+               FINA_REGR_ID = EXCLUDED.FINA_REGR_ID,
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE TB_LNK_ORG_INFC_R.USE_YN &lt;&gt; 'Y'
+    </insert>
+
+    <!--
+           목록에 없는 기존 허용 인터페이스를 사용 안 함(N)으로 수정 (행은 지우지 않음)
+           작성자 : ywkim
+      -->
+    <update id="updateLinkOrgInterfaceUnused">
+        /* LinkOrgMapper.updateLinkOrgInterfaceUnused 목록에 없는 기존 허용 인터페이스를 사용 안 함(N)으로 수정 (행은 지우지 않음) */
+        UPDATE TB_LNK_ORG_INFC_R
+           SET USE_YN       = 'N',
+               FINA_REGR_ID = #{usrId},
+               FINA_REG_DT  = CURRENT_TIMESTAMP
+         WHERE LNK_ORG_ID = #{lnkOrgId}
+           AND USE_YN = 'Y'
+        <if test="infcIdList != null and !infcIdList.isEmpty()">
+           AND INFC_ID NOT IN
+            <foreach collection="infcIdList" item="infcId" open="(" separator="," close=")">
+                #{infcId}
+            </foreach>
+        </if>
+    </update>
+</mapper>

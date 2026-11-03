@@ -29,6 +29,11 @@ public class KmsProperties {
      */
     private String provider = "local";
 
+    /**
+     * KMS 사용 여부 (false 면 KmsClient 빈을 만들지 않는다)
+     */
+    private boolean enabled = true;
+
     private Local local = new Local();
 
     /**

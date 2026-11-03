@@ -95,6 +95,19 @@ coder:
     heartbeat-interval-ms: 25000
     max-emitters-per-user: 10      # 사용자당 최대 연결(탭) 수
 
+  # KMS (coder-core-kms) - SYLK010 API관리에서 coder-api 클라이언트 비밀키를 암호화해 발급
+  #   coder-api 와 같은 마스터키·KEK ID 를 써야 coder-api 가 복호화할 수 있다.
+  #   local 은 개발·테스트 전용 (prod 프로필은 coder.kms.enabled=false, 운영 KMS 는 coder-api PRD 13장 #3)
+  kms:
+    provider: local
+    local:
+      master-key: ${CODER_KMS_MASTER_KEY:SkGMuKUqBsOPsIO/4mtNQouYMef6yarOzjKVU3N2ndA=}
+
+  # 대외 연계 API(coder-api) 관리 (SYLK010)
+  link:
+    client-secret-kek-id: api-client-secret     # coder-api coder.api.token.client-secret-kek-id 와 같아야 함
+    cache-evict-channel: "coder:api:cache-evict" # coder-api coder.api.cache.evict-channel 과 같아야 함
+
   # Message / i18n Configuration (coder-core-common)
   message:
     basename: messages/messages

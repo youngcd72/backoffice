@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : InterfaceCallMapper.xml
+    Description   : SYLK010 API관리 호출이력 MyBatis Mapper (TB_INFC_CALL_L, 요청일시 월 파티션)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.11.03  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.link.mapper.InterfaceCallMapper">
+
+    <!--
+           호출이력 조회 조건 (요청일시 범위로 월 파티션만 읽는다)
+           작성자 : ywkim
+      -->
+    <sql id="interfaceCallWhere">
+        WHERE C.RQMT_DTTM &gt;= #{stDttm}
+          AND C.RQMT_DTTM &lt; #{endDttm}
+        <if test="request.lnkOrgId != null and request.lnkOrgId != ''">
+          AND C.LNK_ORG_ID = #{request.lnkOrgId}
+        </if>
+        <if test="request.infcId != null and request.infcId != ''">
+          AND C.INFC_ID = #{request.infcId}
+        </if>
+        <!-- OGNL 에서 'S' 는 문자(char)라 문자열과 같지 않으므로 큰따옴표로 비교한다 -->
+        <if test='request.rsltCd == "S"'>
+          AND C.HTTP_STAT_CD LIKE '2%'
+        </if>
+        <if test='request.rsltCd == "F"'>
+          AND C.HTTP_STAT_CD NOT LIKE '2%'
+        </if>
+        <if test="request.trcId != null and request.trcId.trim() != ''">
+          AND C.TRC_ID = TRIM(#{request.trcId})
+        </if>
+    </sql>
+
+    <!--
+           호출이력 조회 컬럼 (본문 제외, 일시는 ISO 문자열)
+           작성자 : ywkim
+      -->
+    <sql id="interfaceCallColumns">
+        C.CALL_SN,
+        C.TRC_ID,
+        C.KEY_ID,
+        C.LNK_ORG_ID,
+        O.LNK_ORG_NM,
+        C.INFC_ID,
+        I.INFC_NM,
+        C.HTTP_METH_NM,
+        C.URL,
+        C.HTTP_STAT_CD,
+        C.CLNT_IP_ADDR,
+        TO_CHAR(C.RQMT_DTTM, 'YYYY-MM-DD"T"HH24:MI:SS.MS') AS RQMT_DTTM,
+        TO_CHAR(C.RSPN_DTTM, 'YYYY-MM-DD"T"HH24:MI:SS.MS') AS RSPN_DTTM,
+        C.ELAPSED_MS,
+        C.ERR_CD
+    </sql>
+
+    <!--
+           조회 조건에 맞는 호출이력 건수를 조회
+           작성자 : ywkim
+      -->
+    <select id="selectInterfaceCallCount" resultType="int">
+        /* InterfaceCallMapper.selectInterfaceCallCount 조회 조건에 맞는 호출이력 건수를 조회 */
+        SELECT COUNT(*)
+        FROM TB_INFC_CALL_L C
+        <include refid="interfaceCallWhere"/>
+    </select>
+
+    <!--
+           조회 조건에 맞는 호출이력을 요청일시 최근 순으로 최대 건수까지 조회 (본문 제외)
+           작성자 : ywkim
+      -->
+    <select id="selectInterfaceCallList" resultType="kr.or.coder.biz.system.link.dto.InterfaceCallResponse">
+        /* InterfaceCallMapper.selectInterfaceCallList 조회 조건에 맞는 호출이력을 요청일시 최근 순으로 최대 건수까지 조회 (본문 제외) */
+        SELECT <include refid="interfaceCallColumns"/>
+        FROM TB_INFC_CALL_L C
+        LEFT JOIN TB_LNK_ORG_M O ON O.LNK_ORG_ID = C.LNK_ORG_ID
+        LEFT JOIN TB_INFC_M I ON I.INFC_ID = C.INFC_ID
+        <include refid="interfaceCallWhere"/>
+        ORDER BY C.RQMT_DTTM DESC, C.CALL_SN DESC
+        LIMIT #{size}
+    </select>
+
+    <!--
+           호출이력 1건을 요청·응답 본문까지 조회
+           작성자 : ywkim
+      -->
+    <select id="selectInterfaceCall" resultType="kr.or.coder.biz.system.link.dto.InterfaceCallResponse">
+        /* InterfaceCallMapper.selectInterfaceCall 호출이력 1건을 요청·응답 본문까지 조회 */
+        SELECT <include refid="interfaceCallColumns"/>,
+               C.RQMT_CONT,
+               C.RSPN_CONT
+        FROM TB_INFC_CALL_L C
+        LEFT JOIN TB_LNK_ORG_M O ON O.LNK_ORG_ID = C.LNK_ORG_ID
+        LEFT JOIN TB_INFC_M I ON I.INFC_ID = C.INFC_ID
+        WHERE C.CALL_SN = #{callSn}
+          AND C.RQMT_DTTM &gt;= #{stDttm}
+          AND C.RQMT_DTTM &lt; #{endDttm}
+    </select>
+</mapper>

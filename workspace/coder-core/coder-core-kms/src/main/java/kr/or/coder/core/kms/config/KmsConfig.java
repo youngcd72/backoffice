@@ -5,6 +5,7 @@ import kr.or.coder.core.kms.SecretResolver;
 import kr.or.coder.core.kms.local.LocalKmsClient;
 import kr.or.coder.core.kms.local.LocalSecretResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import java.time.Clock;
 
 /**
  * KMS 클라이언트·비밀 저장소·Clock 빈 설정 (provider 설정에 따라 구현체 선택)
+ * coder.kms.enabled=false 이면 빈을 만들지 않는다 (KMS 제품이 정해지지 않은 운영 서버에서 기동을 막지 않도록)
  * @author ywkim
  * @since 2026.10.09
  * @version 1.0
@@ -26,6 +28,7 @@ import java.time.Clock;
  * </pre>
  */
 @Configuration
+@ConditionalOnProperty(prefix = "coder.kms", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(KmsProperties.class)
 public class KmsConfig {
 

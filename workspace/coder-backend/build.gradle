@@ -33,6 +33,7 @@ dependencies {
     implementation 'kr.or.coder.core:coder-core-db'
     implementation 'kr.or.coder.core:coder-core-redis'
     implementation 'kr.or.coder.core:coder-core-security'
+    implementation 'kr.or.coder.core:coder-core-kms'
 
     // Spring Boot Actuator for health check & metrics
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : LinkKeyMapper.xml
+    Description   : SYLK010 API관리 클라이언트 키·키 이력 MyBatis Mapper (TB_LNK_KEY_M, TB_LNK_KEY_H)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.11.03  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.link.mapper.LinkKeyMapper">
+
+    <!--
+           클라이언트 키 조회 컬럼 (암호화 비밀키·KEK ID 제외, 일시는 ISO 문자열)
+           작성자 : ywkim
+      -->
+    <sql id="linkKeyColumns">
+        KEY_ID,
+        LNK_ORG_ID,
+        KEY_STAT_CD,
+        TO_CHAR(ISSU_DTTM, 'YYYY-MM-DD"T"HH24:MI:SS.MS') AS ISSU_DTTM,
+        TO_CHAR(EXPI_DTTM, 'YYYY-MM-DD"T"HH24:MI:SS.MS') AS EXPI_DTTM,
+        ALLW_IP_ADDR,
+        MI_CALL_LMT_CNT,
+        DAY_CALL_LMT_CNT,
+        SIMU_RQMT_LMT_CNT,
+        RMK
+    </sql>
+
+    <!--
+           연계기관의 클라이언트 키 목록을 상태·발급일시 최근 순으로 조회 (암호화 비밀키 제외)
+           작성자 : ywkim
+      -->
+    <select id="selectLinkKeyList" resultType="kr.or.coder.biz.system.link.dto.LinkKeyResponse">
+        /* LinkKeyMapper.selectLinkKeyList 연계기관의 클라이언트 키 목록을 상태·발급일시 최근 순으로 조회 (암호화 비밀키 제외) */
+        SELECT <include refid="linkKeyColumns"/>
+        FROM TB_LNK_KEY_M
+        WHERE LNK_ORG_ID = #{lnkOrgId}
+        ORDER BY KEY_STAT_CD, TB_LNK_KEY_M.ISSU_DTTM DESC
+    </select>
+
+    <!--
+           연계기관의 클라이언트 키 1건을 조회 (암호화 비밀키 제외)
+           작성자 : ywkim
+      -->
+    <select id="selectLinkKey" resultType="kr.or.coder.biz.system.link.dto.LinkKeyResponse">
+        /* LinkKeyMapper.selectLinkKey 연계기관의 클라이언트 키 1건을 조회 (암호화 비밀키 제외) */
+        SELECT <include refid="linkKeyColumns"/>
+        FROM TB_LNK_KEY_M
+        WHERE LNK_ORG_ID = #{lnkOrgId}
+          AND KEY_ID = #{keyId}
+    </select>
+
+    <!--
+           클라이언트 키를 사용 상태로 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertLinkKey" useGeneratedKeys="false">
+        /* LinkKeyMapper.insertLinkKey 클라이언트 키를 사용 상태로 등록 */
+        INSERT INTO TB_LNK_KEY_M (
+            KEY_ID, LNK_ORG_ID, ENC_KEY_VAL, KMS_KEY_ID, KEY_STAT_CD, ISSU_DTTM, EXPI_DTTM,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{keyId}, #{lnkOrgId}, #{encKeyVal}, #{kmsKeyId}, '01', #{issuDttm}, #{expiDttm},
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           클라이언트 키의 상태·만료일시·허용IP·호출 한도·비고를 수정 (폐기된 키는 수정하지 않음)
+           작성자 : ywkim
+      -->
+    <update id="updateLinkKey">
+        /* LinkKeyMapper.updateLinkKey 클라이언트 키의 상태·만료일시·허용IP·호출 한도·비고를 수정 (폐기된 키는 수정하지 않음) */
+        UPDATE TB_LNK_KEY_M
+           SET KEY_STAT_CD       = #{item.keyStatCd},
+               EXPI_DTTM         = CASE WHEN NULLIF(#{item.expiDt}, '') IS NULL THEN NULL
+                                        ELSE TO_TIMESTAMP(#{item.expiDt} || '235959', 'YYYYMMDDHH24MISS') END,
+               ALLW_IP_ADDR      = NULLIF(#{item.allwIpAddr}, ''),
+               MI_CALL_LMT_CNT   = #{item.miCallLmtCnt},
+               DAY_CALL_LMT_CNT  = #{item.dayCallLmtCnt},
+               SIMU_RQMT_LMT_CNT = #{item.simuRqmtLmtCnt},
+               RMK               = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID      = #{usrId},
+               FINA_REG_DT       = CURRENT_TIMESTAMP
+         WHERE LNK_ORG_ID = #{lnkOrgId}
+           AND KEY_ID = #{keyId}
+           AND KEY_STAT_CD &lt;&gt; '03'
+    </update>
+
+    <!--
+           클라이언트 키 이력을 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertLinkKeyHist" useGeneratedKeys="false">
+        /* LinkKeyMapper.insertLinkKeyHist 클라이언트 키 이력을 등록 */
+        INSERT INTO TB_LNK_KEY_H (
+            KEY_HIST_SN, KEY_ID, KEY_STAT_CD, CHG_CONT, KMS_AUDIT_ID,
+            FIRS_REGR_ID, FIRS_REG_DT
+        ) VALUES (
+            NEXTVAL('SQ_TB_LNK_KEY_H_KEY_HIST_SN'), #{keyId}, #{keyStatCd}, #{chgCont}, #{kmsAuditId},
+            #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           클라이언트 키 이력을 최근 순으로 조회
+           작성자 : ywkim
+      -->
+    <select id="selectLinkKeyHistList" resultType="kr.or.coder.biz.system.link.dto.LinkKeyHistResponse">
+        /* LinkKeyMapper.selectLinkKeyHistList 클라이언트 키 이력을 최근 순으로 조회 */
+        SELECT KEY_HIST_SN,
+               KEY_ID,
+               KEY_STAT_CD,
+               CHG_CONT,
+               FIRS_REGR_ID,
+               TO_CHAR(FIRS_REG_DT, 'YYYY-MM-DD"T"HH24:MI:SS.MS') AS FIRS_REG_DT
+        FROM TB_LNK_KEY_H
+        WHERE KEY_ID = #{keyId}
+        ORDER BY KEY_HIST_SN DESC
+    </select>
+</mapper>

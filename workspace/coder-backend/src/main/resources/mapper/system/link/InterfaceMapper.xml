@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : InterfaceMapper.xml
+    Description   : SYLK010 API관리 인터페이스 MyBatis Mapper (TB_INFC_M)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.11.03  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.link.mapper.InterfaceMapper">
+
+    <!--
+           조회 조건에 맞는 인터페이스 목록을 인터페이스ID 순으로 조회 (허용 기관 수 포함)
+           작성자 : ywkim
+      -->
+    <select id="selectInterfaceList" resultType="kr.or.coder.biz.system.link.dto.InterfaceResponse">
+        /* InterfaceMapper.selectInterfaceList 조회 조건에 맞는 인터페이스 목록을 인터페이스ID 순으로 조회 (허용 기관 수 포함) */
+        SELECT I.INFC_ID,
+               I.INFC_NM,
+               I.HTTP_METH_NM,
+               I.URL,
+               I.BODY_LOG_YN,
+               I.MASK_FLD_CONT,
+               I.USE_YN,
+               I.RMK,
+               (SELECT COUNT(*)
+                  FROM TB_LNK_ORG_INFC_R R
+                 WHERE R.INFC_ID = I.INFC_ID
+                   AND R.USE_YN = 'Y') AS ALLW_ORG_CNT
+        FROM TB_INFC_M I
+        <where>
+            <if test="keyword != null and keyword.trim() != ''">
+                AND (UPPER(I.INFC_ID) LIKE '%' || UPPER(TRIM(#{keyword})) || '%'
+                     OR UPPER(I.INFC_NM) LIKE '%' || UPPER(TRIM(#{keyword})) || '%'
+                     OR UPPER(I.URL) LIKE '%' || UPPER(TRIM(#{keyword})) || '%')
+            </if>
+            <if test="useYn != null and useYn != ''">
+                AND I.USE_YN = #{useYn}
+            </if>
+        </where>
+        ORDER BY I.INFC_ID
+    </select>
+
+    <!--
+           인터페이스ID가 등록되어 있는지 판별
+           작성자 : ywkim
+      -->
+    <select id="existsInterface" resultType="boolean">
+        /* InterfaceMapper.existsInterface 인터페이스ID가 등록되어 있는지 판별 */
+        SELECT EXISTS (SELECT 1 FROM TB_INFC_M WHERE INFC_ID = #{infcId})
+    </select>
+
+    <!--
+           인터페이스ID 목록 중 등록된 인터페이스 수를 조회
+           작성자 : ywkim
+      -->
+    <select id="selectInterfaceCount" resultType="int">
+        /* InterfaceMapper.selectInterfaceCount 인터페이스ID 목록 중 등록된 인터페이스 수를 조회 */
+        SELECT COUNT(*)
+        FROM TB_INFC_M
+        WHERE INFC_ID IN
+        <foreach collection="infcIdList" item="infcId" open="(" separator="," close=")">
+            #{infcId}
+        </foreach>
+    </select>
+
+    <!--
+           인터페이스를 등록
+           작성자 : ywkim
+      -->
+    <insert id="insertInterface">
+        /* InterfaceMapper.insertInterface 인터페이스를 등록 */
+        INSERT INTO TB_INFC_M (
+            INFC_ID, INFC_NM, HTTP_METH_NM, URL, BODY_LOG_YN, MASK_FLD_CONT, USE_YN, RMK,
+            FIRS_REGR_ID, FIRS_REG_DT, FINA_REGR_ID, FINA_REG_DT
+        ) VALUES (
+            #{item.infcId}, #{item.infcNm}, #{item.httpMethNm}, #{item.url}, #{item.bodyLogYn},
+            NULLIF(#{item.maskFldCont}, ''), #{item.useYn}, NULLIF(#{item.rmk}, ''),
+            #{usrId}, CURRENT_TIMESTAMP, #{usrId}, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!--
+           인터페이스를 수정
+           작성자 : ywkim
+      -->
+    <update id="updateInterface">
+        /* InterfaceMapper.updateInterface 인터페이스를 수정 */
+        UPDATE TB_INFC_M
+           SET INFC_NM       = #{item.infcNm},
+               HTTP_METH_NM  = #{item.httpMethNm},
+               URL           = #{item.url},
+               BODY_LOG_YN   = #{item.bodyLogYn},
+               MASK_FLD_CONT = NULLIF(#{item.maskFldCont}, ''),
+               USE_YN        = #{item.useYn},
+               RMK           = NULLIF(#{item.rmk}, ''),
+               FINA_REGR_ID  = #{usrId},
+               FINA_REG_DT   = CURRENT_TIMESTAMP
+         WHERE INFC_ID = #{item.infcId}
+    </update>
+</mapper>

@@ -29,6 +29,10 @@ coder:
   swagger:
     enabled: false
 
+  # 운영 KMS 제품이 정해질 때까지 KMS 를 끈다 (local KMS 는 prod 기동 거부). SYLK010 키 발급은 sy.link.kms.not.configured
+  kms:
+    enabled: false
+
 management:
   endpoints:
     web:

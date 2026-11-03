@@ -27,7 +27,8 @@ INSERT INTO TB_MENU_M (
     -- 시스템관리 > LOG관리
     ('SY030000', 'LOG관리',            3, 'MENU', 'SY000000', 'Y', NULL,      'admin', 'admin'),
     ('SY030100', '시스템로그관리',     1, 'LINK', 'SY030000', 'Y', 'SYLO030', 'admin', 'admin'),
-    -- 시스템관리 > 배치관리
-    ('SY040000', '배치관리',           4, 'MENU', 'SY000000', 'Y', NULL,      'admin', 'admin'),
-    ('SY040100', '배치관리',           1, 'LINK', 'SY040000', 'Y', 'SYLK050', 'admin', 'admin')
+    -- 시스템관리 > 연계관리
+    ('SY040000', '연계관리',           4, 'MENU', 'SY000000', 'Y', NULL,      'admin', 'admin'),
+    ('SY040100', 'API관리',            1, 'LINK', 'SY040000', 'Y', 'SYLK010', 'admin', 'admin'),
+    ('SY040500', '배치관리',           5, 'LINK', 'SY040000', 'Y', 'SYLK050', 'admin', 'admin')
 ON CONFLICT (MENU_ID) DO NOTHING;

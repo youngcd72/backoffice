@@ -24,6 +24,7 @@ import UserAuthManageView from '@/views/system/auths/UserAuthManageView.vue';
 import AuthGroupUserManageView from '@/views/system/auths/AuthGroupUserManageView.vue';
 import CommonCodeManageView from '@/views/master/basic/CommonCodeManageView.vue';
 import BatchManageView from '@/views/system/links/BatchManageView.vue';
+import ApiManageView from '@/views/system/links/ApiManageView.vue';
 import SystemLogManageView from '@/views/system/logs/SystemLogManageView.vue';
 import NotFoundView from '@/views/errors/NotFoundView.vue';
 import { isValidJwt } from '@/stores/auth';
@@ -86,6 +87,12 @@ const routes: RouteRecordRaw[] = [
     name: 'SYLO030',
     component: SystemLogManageView,
     meta: { title: '시스템로그관리 - CODER', requiresAuth: true },
+  },
+  {
+    path: '/sy/sylk010',
+    name: 'SYLK010',
+    component: ApiManageView,
+    meta: { title: 'API관리 - CODER', requiresAuth: true },
   },
   {
     path: '/sy/sylk050',
