@@ -52,7 +52,7 @@ public class ApiProperties {
         /** KMS 서명키 ID (RS256) */
         private String signingKeyId = "coder-api-token";
         /** 클라이언트 비밀키를 암호화하는 KMS KEK ID */
-        private String clientSecretKekId = "coder-api-client-secret";
+        private String clientSecretKekId = "api-client-secret";
         /** 비밀키를 연속으로 틀리면 키를 막는 횟수 */
         private int maxSecretFailCount = 5;
         /** 비밀키 연속 실패 시 키를 막는 시간 (분) */

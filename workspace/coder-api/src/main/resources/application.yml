@@ -84,7 +84,7 @@ coder:
       issuer: coder-api
       expires-in: 3600                       # 액세스 토큰 만료 (초)
       signing-key-id: coder-api-token        # KMS 서명키 ID (RS256)
-      client-secret-kek-id: coder-api-client-secret
+      client-secret-kek-id: api-client-secret
       max-secret-fail-count: 5               # 비밀키 연속 실패 시 잠금 횟수 (PRD 13장 #5)
       secret-fail-lock-minutes: 10           # 잠금 시간 (분)
     trusted-proxies: []                      # X-Forwarded-For 를 믿을 프록시 IP/CIDR (L4/LB 주소)
