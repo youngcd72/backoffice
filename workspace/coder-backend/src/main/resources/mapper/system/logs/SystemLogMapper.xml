@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    SQL File Name : SystemLogMapper.xml
+    Description   : SYLO030 시스템로그관리 MyBatis Mapper (TB_USR_M)
+
+    ==개정이력========================================
+    수정일     수정자   Version    Query Id
+    ========== ======= =========   ===================
+    2026.10.09  ywkim    0.1       최초등록
+-->
+<mapper namespace="kr.or.coder.biz.system.logs.mapper.SystemLogMapper">
+
+    <!--
+           사용자ID 목록에 해당하는 사용자 정보를 조회
+           작성자 : ywkim
+      -->
+    <select id="selectLogUsrList" resultType="kr.or.coder.biz.system.logs.dto.LogUsrResponse">
+        /* SystemLogMapper.selectLogUsrList 사용자ID 목록에 해당하는 사용자 정보를 조회 */
+        SELECT USR_ID,
+               USR_NM,
+               USR_CLS_CD,
+               DEPT_CD
+        FROM TB_USR_M
+        WHERE USR_ID IN
+        <foreach collection="usrIdList" item="usrId" open="(" separator="," close=")">
+            #{usrId}
+        </foreach>
+    </select>
+
+    <!--
+           사용자명(부분 일치)·사용자구분 조건에 맞는 사용자ID 목록을 조회
+           작성자 : ywkim
+      -->
+    <select id="selectLogUsrIdList" resultType="string">
+        /* SystemLogMapper.selectLogUsrIdList 사용자명(부분 일치)·사용자구분 조건에 맞는 사용자ID 목록을 조회 */
+        SELECT USR_ID
+        FROM TB_USR_M
+        WHERE 1 = 1
+        <if test="usrNm != null and usrNm != ''">
+          AND USR_NM LIKE '%' || #{usrNm} || '%'
+        </if>
+        <if test="usrClsCd != null and usrClsCd != ''">
+          AND USR_CLS_CD = #{usrClsCd}
+        </if>
+    </select>
+
+</mapper>
