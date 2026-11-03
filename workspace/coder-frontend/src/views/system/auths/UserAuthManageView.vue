@@ -646,7 +646,7 @@ onMounted(async () => {
 
       <div class="right-area">
         <!-- 상세정보 -->
-        <div class="detail-area">
+        <div class="detail-area panel">
           <div class="area-header">
             <span class="area-title">
               상세정보
@@ -661,13 +661,13 @@ onMounted(async () => {
           <form
             v-if="activeUsrRow"
             id="frmUsrDtl"
-            class="detail-form"
+            class="dtl-form"
             :class="{ 'is-locked': isActiveUsrDeleted }"
             @submit.prevent
           >
-            <div class="dtl-grid">
-              <div class="dtl-item">
-                <span class="field-label">사용자명</span>
+            <div class="dtl-row">
+              <span class="dtl-label">사용자명</span>
+              <div class="dtl-value">
                 <Input
                   id="txtDtlUsrNm"
                   required
@@ -677,8 +677,8 @@ onMounted(async () => {
                   @update:model-value="setUsrField('usrNm', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">사용자ID</span>
+              <span class="dtl-label">사용자ID</span>
+              <div class="dtl-value">
                 <Input
                   id="txtDtlUsrId"
                   required
@@ -689,12 +689,14 @@ onMounted(async () => {
                   @update:model-value="setUsrField('usrId', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">사원번호</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">사원번호</span>
+              <div class="dtl-value">
                 <Input id="txtDtlEmpNo" :model-value="activeUsrRow.empNo" size="small" readonly />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">부서</span>
+              <span class="dtl-label">부서</span>
+              <div class="dtl-value">
                 <Select
                   id="cboDtlDeptCd"
                   :model-value="activeUsrRow.deptCd"
@@ -703,8 +705,10 @@ onMounted(async () => {
                   @update:model-value="setUsrField('deptCd', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">재직여부</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">재직여부</span>
+              <div class="dtl-value">
                 <Select
                   id="cboDtlUsrStatCd"
                   :model-value="activeUsrRow.usrStatCd"
@@ -713,8 +717,8 @@ onMounted(async () => {
                   @update:model-value="setUsrField('usrStatCd', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">사용여부</span>
+              <span class="dtl-label">사용여부</span>
+              <div class="dtl-value">
                 <label class="lock-check">
                   <input
                     id="chkDtlUseYn"
@@ -727,8 +731,10 @@ onMounted(async () => {
                   사용
                 </label>
               </div>
-              <div class="dtl-item">
-                <span class="field-label">사용자유형</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">사용자유형</span>
+              <div class="dtl-value">
                 <Select
                   id="cboDtlUsrClsCd"
                   :model-value="activeUsrRow.usrClsCd"
@@ -737,8 +743,8 @@ onMounted(async () => {
                   @update:model-value="setUsrField('usrClsCd', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">잠김여부</span>
+              <span class="dtl-label">잠김여부</span>
+              <div class="dtl-value">
                 <label class="lock-check">
                   <input
                     id="chkDtlUsrLockYn"
@@ -751,8 +757,10 @@ onMounted(async () => {
                   잠김
                 </label>
               </div>
-              <div class="dtl-item">
-                <span class="field-label">이메일</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">이메일</span>
+              <div class="dtl-value">
                 <Input
                   id="txtDtlEmlAddr"
                   :model-value="activeUsrRow.emlAddr"
@@ -763,8 +771,8 @@ onMounted(async () => {
                   @update:model-value="setUsrField('emlAddr', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">전화번호</span>
+              <span class="dtl-label">전화번호</span>
+              <div class="dtl-value">
                 <Input
                   id="txtDtlMoblNo"
                   :model-value="activeUsrRow.moblNo"
@@ -775,16 +783,20 @@ onMounted(async () => {
                   @update:model-value="setUsrField('moblNo', $event)"
                 />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">입사일자</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">입사일자</span>
+              <div class="dtl-value">
                 <Input id="txtDtlEcomDt" :model-value="ymdToDash(activeUsrRow.ecomDt)" size="small" readonly />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">퇴사일자</span>
+              <span class="dtl-label">퇴사일자</span>
+              <div class="dtl-value">
                 <Input id="txtDtlResiDt" :model-value="ymdToDash(activeUsrRow.resiDt)" size="small" readonly />
               </div>
-              <div class="dtl-item">
-                <span class="field-label">시작일자</span>
+            </div>
+            <div class="dtl-row">
+              <span class="dtl-label">시작일자</span>
+              <div class="dtl-value">
                 <span class="date-box">
                   <DatePicker
                     id="dtpDtlStDt"
@@ -797,8 +809,8 @@ onMounted(async () => {
                   />
                 </span>
               </div>
-              <div class="dtl-item">
-                <span class="field-label">종료일자</span>
+              <span class="dtl-label">종료일자</span>
+              <div class="dtl-value">
                 <span class="date-box">
                   <DatePicker
                     id="dtpDtlEndDt"
@@ -934,13 +946,6 @@ onMounted(async () => {
   align-items: start;
 }
 
-.grid-area, .detail-area {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
 .area-header {
   display: flex;
   align-items: center;
@@ -970,41 +975,6 @@ onMounted(async () => {
   color: var(--ds-ink-2);
 }
 
-.detail-form {
-  overflow-x: auto;
-  padding: 14px 16px;
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-rule);
-  border-radius: var(--ds-radius-panel);
-}
-
-/* 화면 폭이 바뀌어도 항목 위치가 바뀌지 않도록 2열 고정 (좁으면 가로 스크롤) */
-.dtl-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap: 10px 20px;
-}
-
-.dtl-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.dtl-item .field-label {
-  min-width: 84px;
-}
-
-.dtl-item > :not(.field-label) {
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-.dtl-item.is-wide {
-  grid-column: 1 / -1;
-}
-
 .date-box {
   flex: 1 1 0;
   min-width: 0;
@@ -1017,14 +987,12 @@ onMounted(async () => {
   padding: 0 8px;
 }
 
+/* 영역 카드(panel) 안의 안내 문구 */
 .detail-empty {
   margin: 0;
-  padding: 16px;
+  padding: 8px 0;
   font-size: 13px;
   color: var(--ds-ink-2);
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-rule);
-  border-radius: var(--ds-radius-panel);
 }
 
 /* 삭제(D) 표시된 사용자의 하위 데이터는 편집 불가 */

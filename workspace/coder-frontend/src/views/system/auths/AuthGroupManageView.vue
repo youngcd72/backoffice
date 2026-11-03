@@ -527,15 +527,15 @@ onMounted(async () => {
         </div>
 
         <!-- 그룹 유효기간 -->
-        <div class="detail-area">
+        <div class="detail-area panel">
           <div class="area-header">
             <span class="area-title">그룹 유효기간</span>
           </div>
-          <div v-if="activeGrpRow" class="detail-form" :class="{ 'is-locked': isActiveGrpDeleted }">
+          <div v-if="activeGrpRow" class="dtl-form" :class="{ 'is-locked': isActiveGrpDeleted }">
             <!-- 유효기간: 시작일 / 종료일 2줄 -->
-            <div class="detail-row is-top">
-              <span class="field-label">유효기간</span>
-              <div class="date-stack">
+            <div class="dtl-row">
+              <span class="dtl-label">유효기간</span>
+              <div class="dtl-value is-wide date-stack">
                 <div class="date-line">
                   <span class="date-box">
                     <DatePicker
@@ -563,16 +563,18 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <div class="detail-col">
-              <span class="field-label">비고</span>
-              <textarea
-                id="txaRmk"
-                v-model="activeGrpRow.rmk"
-                class="detail-textarea"
-                maxlength="200"
-                rows="3"
-                @input="markRowUpdated(activeGrpRow)"
-              />
+            <div class="dtl-row">
+              <span class="dtl-label">비고</span>
+              <div class="dtl-value is-wide">
+                <textarea
+                  id="txaRmk"
+                  v-model="activeGrpRow.rmk"
+                  class="dtl-textarea"
+                  maxlength="200"
+                  rows="3"
+                  @input="markRowUpdated(activeGrpRow)"
+                />
+              </div>
             </div>
           </div>
           <p v-else class="detail-empty">{{ msg('sy.auth.group.empty.group.select') }}</p>
@@ -676,15 +678,12 @@ onMounted(async () => {
   align-items: start;
 }
 
-.left-area, .grid-area, .detail-area {
+/* 영역 카드(grid-area, panel)는 page.css 공통 스타일을 쓴다 */
+.left-area {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.left-area {
   gap: 16px;
+  min-width: 0;
 }
 
 .area-header {
@@ -712,41 +711,12 @@ onMounted(async () => {
   color: var(--ds-stamp);
 }
 
-.detail-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-rule);
-  border-radius: var(--ds-radius-panel);
-}
-
-.detail-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.detail-col {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.detail-row.is-top {
-  align-items: flex-start;
-}
-
-.detail-row.is-top > .field-label {
-  line-height: 32px;
+/* 좁은 왼쪽 영역이라 라벨 칸을 줄이고 값은 한 칸(is-wide)으로 쓴다 */
+.dtl-row {
+  grid-template-columns: 76px minmax(0, 1fr);
 }
 
 .date-stack {
-  flex: 1 1 0;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
   gap: 6px;
 }
 
@@ -782,34 +752,12 @@ onMounted(async () => {
   visibility: hidden;
 }
 
-.detail-textarea {
-  width: 100%;
-  padding: 8px 10px;
-  font: inherit;
-  font-size: 13px;
-  color: var(--ds-ink);
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-rule-strong);
-  border-radius: var(--ds-radius-control);
-  box-sizing: border-box;
-  resize: vertical;
-  transition: border-color var(--ds-ease);
-}
-
-.detail-textarea:focus {
-  outline: none;
-  border-color: var(--ds-slate-700);
-  box-shadow: var(--ds-focus-field);
-}
-
+/* 영역 카드(panel) 안의 안내 문구 */
 .detail-empty {
   margin: 0;
-  padding: 16px;
+  padding: 8px 0;
   font-size: 13px;
   color: var(--ds-ink-2);
-  background: var(--ds-surface);
-  border: 1px solid var(--ds-rule);
-  border-radius: var(--ds-radius-panel);
 }
 
 /* 삭제(D) 표시된 그룹·화면의 하위 데이터는 편집 불가 */

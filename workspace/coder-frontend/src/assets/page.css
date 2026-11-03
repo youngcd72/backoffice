@@ -63,12 +63,20 @@
   color: var(--ds-ink-2);
 }
 
-.grid-area {
+/* 영역 카드: 제목줄(grid-header)과 내용(그리드·폼)을 한 카드로 묶는다.
+   grid-area 는 그리드 영역, panel 은 그 밖의 영역(상세 폼 등)에 쓴다. 검색 영역과 같은 흰 카드다. */
+.grid-area,
+.panel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
+  padding: 12px 16px 16px;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-rule);
+  border-radius: var(--ds-radius-panel);
 }
+
 
 .grid-header {
   display: flex;
@@ -85,6 +93,31 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--ds-ink);
+}
+
+/* 카드 제목 막대: 사이드메뉴 제목 막대(sidebar-header-dot)와 같은 모양으로 영역 제목을 표시한다 (제목 글자 14px 보다 조금 길게).
+   팝업 안 소제목(dtl-toolbar)에는 넣지 않는다. 화면별 area-title 도 같은 막대를 쓴다.
+   제목의 display(inline / inline-flex)와 관계없이 같은 간격이 되도록 왼쪽 여백 자리에 막대를 위치 고정으로 그린다. */
+.grid-area > .grid-header > .grid-title,
+.panel > .grid-header > .grid-title,
+.grid-area > .area-header > .area-title,
+.panel > .area-header > .area-title {
+  position: relative;
+  padding-left: 11px;
+}
+
+.grid-area > .grid-header > .grid-title::before,
+.panel > .grid-header > .grid-title::before,
+.grid-area > .area-header > .area-title::before,
+.panel > .area-header > .area-title::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 3px;
+  height: 17px;
+  background: var(--ds-slate-700);
+  transform: translateY(-50%);
 }
 
 .sub-title,
@@ -217,16 +250,19 @@
   white-space: nowrap;
 }
 
-/* 상세 폼 (라벨 | 값 | 라벨 | 값) */
+/* 상세 폼 (라벨 | 값 | 라벨 | 값): 위 굵은 선(화면 제목줄 아래 선과 같은 두께·색) + 행 구분선,
+   라벨 칸은 옅은 배경으로 입력칸과 나눈다. 그리드는 자체 머리글이 있으므로 굵은 선을 쓰지 않는다.
+   입력 컴포넌트는 size="small" 로 쓴다. */
 .dtl-form {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--ds-rule-strong);
+  border-top: 2px solid var(--ds-slate-900);
 }
 
+/* 라벨 칸은 행 높이를 꽉 채운다 (값 아래 안내문이 있어도 배경이 끊기지 않게) */
 .dtl-row {
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr) 120px minmax(0, 1fr);
+  grid-template-columns: 100px minmax(0, 1fr) 100px minmax(0, 1fr);
   align-items: stretch;
   border-bottom: 1px solid var(--ds-rule);
 }
@@ -234,10 +270,11 @@
 .dtl-label {
   display: flex;
   align-items: center;
-  padding: 8px 10px;
+  padding: 0 10px;
   font-size: 13px;
   font-weight: 600;
   color: var(--ds-ink-2);
+  white-space: nowrap;
   background: var(--ds-slate-050);
 }
 
@@ -246,8 +283,9 @@
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  padding: 6px 10px;
   min-width: 0;
+  min-height: 40px;
+  padding: 5px 8px;
   font-size: 13px;
 }
 

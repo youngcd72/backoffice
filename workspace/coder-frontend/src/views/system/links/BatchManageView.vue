@@ -1083,19 +1083,20 @@ onMounted(async () => {
               :disabled="!isNewJob"
               maxlength="7"
               placeholder="BHFL001"
+              size="small"
             />
             <p v-if="isNewJob" class="field-hint">BH + 업무 2자리 + 순번 3자리</p>
           </div>
           <span class="dtl-label">업무모듈</span>
           <div class="dtl-value">
-            <Select id="cboDtlWrkMdulCd" v-model="dtlForm.wrkMdulCd" required :options="wrkMdulOptions" />
+            <Select id="cboDtlWrkMdulCd" v-model="dtlForm.wrkMdulCd" required :options="wrkMdulOptions" size="small" />
           </div>
         </div>
 
         <div class="dtl-row">
           <span class="dtl-label">배치명</span>
           <div class="dtl-value is-wide">
-            <Input id="txtDtlJobNm" v-model="dtlForm.jobNm" required maxlength="100" />
+            <Input id="txtDtlJobNm" v-model="dtlForm.jobNm" required maxlength="100" size="small" />
           </div>
         </div>
 
@@ -1108,6 +1109,7 @@ onMounted(async () => {
               required
               maxlength="200"
               placeholder="kr.or.coder.batch.job.system.userstatusapply.UserStatusApplyJobConfig"
+              size="small"
             />
             <p class="field-hint">Job 빈을 정의한 클래스 (패키지 포함)</p>
           </div>
@@ -1116,7 +1118,7 @@ onMounted(async () => {
         <div class="dtl-row">
           <span class="dtl-label">스케줄표현식</span>
           <div class="dtl-value">
-            <Input id="txtDtlScheExpr" v-model="dtlForm.scheExpr" maxlength="100" placeholder="0 10 0 * * ?" />
+            <Input id="txtDtlScheExpr" v-model="dtlForm.scheExpr" maxlength="100" placeholder="0 10 0 * * ?" size="small" />
             <p class="field-hint">초 분 시 일 월 주 [년], 비우면 수동 실행 전용</p>
           </div>
           <span class="dtl-label">미스파이어</span>
@@ -1166,7 +1168,7 @@ onMounted(async () => {
         <div class="dtl-row">
           <span class="dtl-label">비고</span>
           <div class="dtl-value is-wide">
-            <Input id="txtDtlRmk" v-model="dtlForm.rmk" maxlength="200" />
+            <Input id="txtDtlRmk" v-model="dtlForm.rmk" maxlength="200" size="small" />
           </div>
         </div>
       </div>

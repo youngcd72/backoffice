@@ -101,14 +101,9 @@ function toYn(event: Event): string {
   </div>
 </template>
 
-<style scoped>
-.grid-area {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
+<style scoped src="@/assets/page.css"></style>
 
+<style scoped>
 .area-header {
   display: flex;
   align-items: center;

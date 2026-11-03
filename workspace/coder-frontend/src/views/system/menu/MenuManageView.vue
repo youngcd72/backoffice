@@ -639,7 +639,7 @@ onMounted(async () => {
 
     <div class="content-area">
       <!-- 메뉴 트리 -->
-      <aside class="tree-area">
+      <aside class="tree-area panel">
         <div class="area-header">
           <span class="area-title">메뉴</span>
           <div class="area-actions">
@@ -784,13 +784,6 @@ onMounted(async () => {
   grid-template-columns: 260px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
-}
-
-.tree-area, .grid-area {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
 }
 
 .tree-box {
