@@ -445,10 +445,12 @@ const handleRowDblClick = (row) => {
   color: var(--ds-ink);
 }
 
+/* 각진 모서리 + 위 굵은 선 (상세 폼 윗선과 같은 두께·색) */
 .table-container {
   overflow-x: auto;
-  border-radius: var(--ds-radius-panel);
   border: 1px solid var(--ds-rule-strong);
+  border-top: 2px solid var(--ds-slate-900);
+  border-radius: 0;
   background: var(--ds-surface);
 }
 
